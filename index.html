@@ -487,12 +487,10 @@
             { c: "كتاب المسلمين المقدس؟", a: "قرآن" }
         ];
 
-        // دالة لخلط وتوليد الحروف تلقائياً لضمان توفر حروف الجواب دائماً
         function generateScrambled(word) {
             let letters = word.split('');
             const extraPool = ['ا', 'ب', 'ت', 'ج', 'ح', 'د', 'ر', 'س', 'ش', 'ص', 'ط', 'ع', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'هـ', 'و', 'ي'];
             
-            // إضافة حروف إضافية عشوائية إذا كان عدد الحروف أقل من 8 لزيادة المتعة
             while(letters.length < 8) {
                 let randomLetter = extraPool[Math.floor(Math.random() * extraPool.length)];
                 if(!letters.includes(randomLetter)) {
@@ -500,7 +498,6 @@
                 }
             }
             
-            // خلط الحروف عشوائياً
             return letters.sort(() => Math.random() - 0.5).join('');
         }
 

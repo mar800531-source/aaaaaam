@@ -51,7 +51,7 @@
             100% { transform: scale(1.2); opacity: 0.6; }
         }
 
-        /* علامات مائية متعددة موزعة في المساحات الفارغة بشكل غير مزعج */
+        /* علامات مائية متعددة موزعة في الخلفية بشكل غير مزعج */
         .watermark-multi {
             position: absolute;
             font-size: 14px;
@@ -65,7 +65,7 @@
         .wm-1 { top: 8%; left: 12%; transform: rotate(-15deg); }
         .wm-2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .wm-3 { bottom: 12%; left: 15%; transform: rotate(25deg); }
-        .wm-4 { bottom: 18%5; right: 12%; transform: rotate(-10deg); }
+        .wm-4 { bottom: 18%; right: 12%; transform: rotate(-10deg); }
         .wm-5 { top: 50%; left: 5%; transform: rotate(-45deg); }
         .wm-6 { top: 45%; right: 6%; transform: rotate(35deg); }
 
@@ -100,7 +100,7 @@
             margin-bottom: 12px;
         }
 
-        /* رأس الصفحة (عداد النقاط وزر المساعدة ومؤشر الخطوات) */
+        /* رأس الصفحة (عداد النقاط وأزرار التحكم العليا) */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -110,24 +110,25 @@
             border-radius: 12px;
             margin-bottom: 12px;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 5px;
         }
 
         .score-badge {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #fde047;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .tool-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            padding: 5px 10px;
+            padding: 5px 8px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
@@ -138,37 +139,16 @@
             border-color: #34d399;
         }
 
-        /* مؤشر الخطوات على شكل 5 نقاط متصلة تمثل مراحل اللعبة وتتغير حركتها */
-        .steps-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 15px;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 8px;
+        /* عداد المراحل */
+        .level-progress-bar {
+            font-size: 13px;
+            color: #34d399;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
             border-radius: 10px;
-        }
-
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .step-dot.active {
-            background: #fde047;
-            border-color: #fca5a5;
-            transform: scale(1.3);
-            box-shadow: 0 0 10px #fde047;
-        }
-
-        .step-dot.completed {
-            background: #10b981;
-            border-color: #34d399;
+            margin-bottom: 12px;
+            font-weight: bold;
+            border: 1px dashed rgba(52, 211, 153, 0.3);
         }
 
         /* صندوق اللغز الجذاب */
@@ -182,6 +162,10 @@
             border-radius: 12px;
             border-right: 4px solid #10b981;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* مربعات الإجابة */
@@ -282,6 +266,85 @@
             min-height: 20px;
         }
 
+        /* نافذة خريطة التنقل المنبثقة */
+        .map-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 44, 34, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 28px;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .map-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #34d399;
+        }
+
+        .close-map-btn {
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid #ef4444;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            overflow-y: auto;
+            max-height: 320px;
+            padding: 5px;
+        }
+
+        .map-level-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .map-level-btn.completed {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #34d399;
+            color: #34d399;
+        }
+
+        .map-level-btn.current {
+            background: #fde047;
+            color: #000;
+            border-color: #fde047;
+        }
+
+        .map-level-btn.locked {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .footer {
             margin-top: 15px;
             font-size: 11px;
@@ -312,17 +375,27 @@
     <div class="sparkle" style="bottom: 15%; right: 20%; animation-delay: 2s;">🌟</div>
 
     <div class="game-container">
+        <!-- نافذة خريطة التنقل الداخلية -->
+        <div class="map-modal" id="mapModal">
+            <div class="map-header">
+                <div class="map-title">🗺️ خريطة المراحل (200 مرحلة)</div>
+                <button class="close-map-btn" onclick="toggleMap(false)">إغلاق ✕</button>
+            </div>
+            <div class="map-grid" id="mapGridContainer"></div>
+        </div>
+
         <div class="main-title">عمار بن ياسر 🧠</div>
         <div class="sub-title">تحدي الكلمات الأسطوري</div>
 
-        <!-- رأس الصفحة: النقاط وزر المساعدة -->
+        <!-- رأس الصفحة: النقاط وزر المساعدة وزر الخريطة -->
         <div class="top-bar">
             <div class="score-badge" id="scoreDisplay">⭐ النقاط: 0</div>
-            <button class="tool-btn" onclick="useHint()" title="كشف حرف بـ 5 نقاط">💡 مساعدة (-5)</button>
+            <button class="tool-btn" onclick="toggleMap(true)">🗺️ الخريطة</button>
+            <button class="tool-btn" onclick="useHint()" title="كشف حرف بـ 5 نقاط">💡 مساعدة</button>
         </div>
 
-        <!-- مؤشر الخطوات (5 نقاط تمثل المراحل) -->
-        <div class="steps-container" id="stepsContainer"></div>
+        <!-- عداد المراحل -->
+        <div class="level-progress-bar" id="levelProgressText">المرحلة 1 من 200</div>
 
         <div class="clue-box" id="clueText">جاري تحميل اللغز...</div>
 
@@ -345,7 +418,6 @@
     </div>
 
     <script>
-        // مولد الأصوات التفاعلية (Web Audio API) بدون الحاجة لملفات خارجية
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if (!audioCtx) return;
@@ -367,9 +439,9 @@
                 osc.stop(audioCtx.currentTime + 0.08);
             } else if (type === 'success') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
                 gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
                 osc.start();
@@ -385,16 +457,46 @@
             }
         }
 
-        const levels = [
-            { clue: "حيوان يُسمى سفينة الصحراء؟", word: "جمل", scrambled: "لمج" },
-            { clue: "عاصمة دولة اليابان؟", word: "طوكيو", scrambled: "يوتكو" },
-            { clue: "أكبر كوكب في المجموعة الشمسية؟", word: "المشتري", scrambled: "ريتمشال" },
-            { clue: "عنصر كيميائي رمزه O؟", word: "أكسجين", scrambled: "نيجكسأ" },
-            { clue: "سورة قرآنية تُسمى قلب القرآن؟", word: "يس", scrambled: "سي" }
+        const baseQuestions = [
+            { clue: "حيوان يُسمى سفينة الصحراء؟", word: "جمل" },
+            { clue: "عاصمة دولة اليابان؟", word: "طوكيو" },
+            { clue: "أكبر كوكب في المجموعة الشمسية؟", word: "المشتري" },
+            { clue: "عنصر كيميائي رمزه O؟", word: "أكسجين" },
+            { clue: "سورة قرآنية تُسمى قلب القرآن؟", word: "يس" },
+            { clue: "عاصمة مصر؟", word: "القاهرة" },
+            { clue: "حيوان يُسمى ملك الأغنام؟", word: "الكبش" },
+            { clue: "ما هو أسرع حيوان بري؟", word: "فهد" },
+            { clue: "عاصمة السعودية؟", word: "الرياض" },
+            { clue: "أطول نهر في العالم؟", word: "النيل" },
+            { clue: "معدن ثمين لونه أصفر؟", word: "ذهب" },
+            { clue: "عاصمة فرنسا؟", word: "باريس" },
+            { clue: "ما هو غاز الحياة والتنفس؟", word: "أكسجين" },
+            { clue: "أكبر محيط على وجه الأرض؟", word: "الهادئ" },
+            { clue: "عاصمة الإمارات؟", word: "أبوظبي" },
+            { clue: "حيوان يعيش في الماء وله صدفة قوية؟", word: "سحلفاة" },
+            { clue: "ما هو الكوكب الأحمر؟", word: "المريخ" },
+            { clue: "عاصمة الجزائر؟", word: "الجزائر" },
+            { clue: "مخترع المصباح الكهربائي؟", word: "ديسون" },
+            { clue: "عاصمة فلسطين الأبدية؟", word: "القدس" }
         ];
 
+        const levels = [];
+        for (let i = 0; i < 200; i++) {
+            let base = baseQuestions[i % baseQuestions.length];
+            let scrambled = base.word.split('').sort(() => Math.random() - 0.5).join('');
+            if (scrambled === base.word && base.word.length > 1) {
+                scrambled = base.word.split('').reverse().join('');
+            }
+            levels.push({
+                clue: `[مرحلة ${i + 1}] ${base.clue}`,
+                word: base.word,
+                scrambled: scrambled
+            });
+        }
+
         let currentLevel = parseInt(localStorage.getItem("mesh_level")) || 0;
-        let score = parseInt(localStorage.getItem("mesh_score")) || 20;
+        let maxUnlockedLevel = parseInt(localStorage.getItem("mesh_max_unlocked")) || currentLevel;
+        let score = parseInt(localStorage.getItem("mesh_score")) || 30;
         let selectedLetters = [];
 
         function updateScore(amount) {
@@ -404,34 +506,55 @@
             document.getElementById("scoreDisplay").innerText = `⭐ النقاط: ${score}`;
         }
 
-        function renderSteps() {
-            const container = document.getElementById("stepsContainer");
+        function toggleMap(show) {
+            playSound('click');
+            const modal = document.getElementById("mapModal");
+            if (show) {
+                modal.style.display = "flex";
+                renderMapGrid();
+            } else {
+                modal.style.display = "none";
+            }
+        }
+
+        function renderMapGrid() {
+            const container = document.getElementById("mapGridContainer");
             container.innerHTML = "";
             for (let i = 0; i < levels.length; i++) {
-                const dot = document.createElement("div");
-                dot.className = "step-dot";
-                if (i < currentLevel) {
-                    dot.classList.add("completed");
-                } else if (i === currentLevel) {
-                    dot.classList.add("active");
+                const btn = document.createElement("button");
+                btn.className = "map-level-btn";
+                btn.innerText = i + 1;
+
+                if (i === currentLevel) {
+                    btn.classList.add("current");
+                } else if (i <= maxUnlockedLevel) {
+                    btn.classList.add("completed");
+                    btn.onclick = () => {
+                        currentLevel = i;
+                        toggleMap(false);
+                        initLevel();
+                    };
+                } else {
+                    btn.classList.add("locked");
+                    btn.title = "مرحلة مقفلة";
                 }
-                container.appendChild(dot);
+                container.appendChild(btn);
             }
         }
 
         function initLevel() {
             updateScore(0);
-            renderSteps();
+            document.getElementById("levelProgressText").innerText = `المرحلة ${currentLevel + 1} من 200`;
 
             if (currentLevel >= levels.length) {
                 document.querySelector(".game-container").innerHTML = `
                     <div class="main-title" style="font-size: 26px;">عمار بن ياسر 🏆</div>
-                    <h1 style="color:#34d399; font-size:22px; margin:15px 0;">أنت أسطورة الكلمات!</h1>
-                    <p style="color:#cbd5e1; font-size:15px; margin-bottom:15px;">أتممت جميع مراحل التحدي بنجاح تام!</p>
+                    <h1 style="color:#34d399; font-size:22px; margin:15px 0;">أنت الأسطورة الحقيقية!</h1>
+                    <p style="color:#cbd5e1; font-size:15px; margin-bottom:15px;">أتممت جميع الـ 200 مرحلة بنجاح باهر!</p>
                     <div style="background: rgba(253,224,71,0.1); border:1px dashed #fde047; padding:10px; border-radius:10px; color:#fde047; margin-bottom:15px; font-weight:bold;">
                         مجموع نقاطك النهائية: ${score} ⭐
                     </div>
-                    <button class="action-btn btn-submit" onclick="resetGame()" style="width:100%; padding:10px;">إعادة اللعب 🔄</button>
+                    <button class="action-btn btn-submit" onclick="resetGame()" style="width:100%; padding:10px;">إعادة اللعب من جديد 🔄</button>
                     <div class="footer" style="margin-top: 20px;">تصميم وتطوير: <strong>عمار أصلاوي</strong></div>
                 `;
                 playSound('success');
@@ -439,7 +562,7 @@
             }
 
             const data = levels[currentLevel];
-            document.getElementById("clueText").innerText = `لغز الخطوة (${currentLevel + 1}/${levels.length}): ${data.clue}`;
+            document.getElementById("clueText").innerText = data.clue;
             selectedLetters = new Array(data.word.length).fill(null);
             document.getElementById("messageText").innerText = "";
 
@@ -525,8 +648,12 @@
                 updateScore(10);
                 playSound('success');
                 currentLevel++;
+                if (currentLevel > maxUnlockedLevel) {
+                    maxUnlockedLevel = currentLevel;
+                    localStorage.setItem("mesh_max_unlocked", maxUnlockedLevel);
+                }
                 localStorage.setItem("mesh_level", currentLevel);
-                setTimeout(initLevel, 1300);
+                setTimeout(initLevel, 1200);
             } else {
                 msg.style.color = "#f87171";
                 msg.innerText = "❌ الحروف غير مرتبة بشكل صحيح!";
@@ -537,7 +664,8 @@
         function resetGame() {
             localStorage.clear();
             currentLevel = 0;
-            score = 20;
+            maxUnlockedLevel = 0;
+            score = 30;
             location.reload();
         }
 

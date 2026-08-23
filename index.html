@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تحدي الـ 1000 سؤال الأسطوري - عمار بن ياسر</title>
+    <title>تحدي كلمة كراش - بن ياسر الأسطوري</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
 
@@ -11,10 +11,10 @@
             --primary-color: #059669;
             --accent-color: #34d399;
             --bg-gradient: radial-gradient(circle at center, #064e3b, #022c22, #011410);
-            --container-bg: rgba(6, 78, 59, 0.75);
+            --container-bg: rgba(6, 78, 59, 0.85);
             --text-color: #ffffff;
             
-            --fs-xl: clamp(18px, 4.5vw, 26px);
+            --fs-xl: clamp(22px, 5.5vw, 32px);
             --fs-l: clamp(16px, 3.8vw, 22px);
             --fs-m: clamp(14px, 3.2vw, 18px);
             --fs-s: clamp(11px, 2.8vw, 14px);
@@ -49,7 +49,7 @@
             position: absolute;
             width: 160vw;
             height: 160vh;
-            background: radial-gradient(circle, rgba(52, 211, 153, 0.3) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.35) 0%, transparent 70%);
             filter: blur(90px);
             z-index: 0;
             animation: pulseGlow 5s ease-in-out infinite alternate;
@@ -57,23 +57,23 @@
 
         @keyframes pulseGlow {
             0% { transform: scale(1); opacity: 0.3; }
-            100% { transform: scale(1.18); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 0.75; }
         }
 
         .game-container {
             background: var(--container-bg);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 2px solid rgba(52, 211, 153, 0.4);
-            padding: 2.5vw 3.5vw;
+            border: 2px solid rgba(52, 211, 153, 0.5);
+            padding: 2vh 3vw;
             border-radius: 35px;
             box-shadow: 
-                0 35px 70px rgba(0, 0, 0, 0.85),
-                inset 0 1px 0 rgba(255, 255, 255, 0.25),
-                0 0 50px rgba(16, 185, 129, 0.3);
+                0 35px 70px rgba(0, 0, 0, 0.9),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                0 0 60px rgba(16, 185, 129, 0.4);
             width: 96vw;
             max-width: 520px;
-            max-height: 96vh;
+            max-height: 98vh;
             text-align: center;
             position: relative;
             z-index: 2;
@@ -81,45 +81,51 @@
             flex-direction: column;
             justify-content: space-between;
             overflow-y: auto;
-            transform-style: preserve-3d;
-            animation: floatContainer 4s ease-in-out infinite alternate;
         }
 
-        @keyframes floatContainer {
-            0% { transform: translateY(0px) rotateX(1.5deg) rotateY(-1deg); }
-            100% { transform: translateY(-8px) rotateX(-1.5deg) rotateY(1deg); }
+        /* عنوان بن ياسر البارز والضخم */
+        .brand-container {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #34d399;
+            border-radius: 20px;
+            padding: 1vh 0;
+            margin-bottom: 1vh;
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.4), inset 0 0 10px rgba(52, 211, 153, 0.2);
+            animation: titleGlow 2.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { border-color: rgba(52, 211, 153, 0.4); box-shadow: 0 0 15px rgba(52, 211, 153, 0.3); }
+            100% { border-color: #fbbf24; box-shadow: 0 0 35px rgba(251, 191, 36, 0.7); }
         }
 
         .header-brand {
-            background: linear-gradient(135deg, #a7f3d0, #34d399, #059669);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             font-size: var(--fs-xl);
             font-weight: 900;
-            margin-bottom: 0.1vh;
-            text-shadow: 0 5px 20px rgba(16, 185, 129, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            background: linear-gradient(135deg, #fef08a, #fbbf24, #34d399, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+            margin: 0;
         }
 
         .sub-brand {
             font-size: var(--fs-s);
-            color: #94a3b8;
-            margin-bottom: 1vh;
+            color: #cbd5e1;
             font-weight: 700;
+            margin-top: 2px;
         }
 
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.45);
             padding: 0.8vh 2vw;
             border-radius: 14px;
-            margin-bottom: 1.2vh;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1vh;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .score-badge {
@@ -129,10 +135,10 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            background: rgba(251, 191, 36, 0.1);
-            padding: 3px 8px;
+            background: rgba(251, 191, 36, 0.12);
+            padding: 4px 10px;
             border-radius: 8px;
-            border: 1px solid rgba(251, 191, 36, 0.3);
+            border: 1px solid rgba(251, 191, 36, 0.4);
         }
 
         .helper-btns {
@@ -141,8 +147,8 @@
         }
 
         .mini-btn {
-            background: rgba(16, 185, 129, 0.25);
-            border: 1px solid rgba(52, 211, 153, 0.5);
+            background: rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(52, 211, 153, 0.6);
             color: #34d399;
             padding: 0.4vh 1.8vw;
             border-radius: 8px;
@@ -154,7 +160,7 @@
 
         .mini-btn:active {
             transform: scale(0.9);
-            background: rgba(16, 185, 129, 0.5);
+            background: rgba(16, 185, 129, 0.6);
         }
 
         .clue-box {
@@ -162,10 +168,10 @@
             margin-bottom: 1.2vh;
             color: #f8fafc;
             font-weight: 700;
-            background: rgba(0, 0, 0, 0.45);
-            padding: 1vh 2.5vw;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1.2vh 2.5vw;
             border-radius: 12px;
-            border-right: 5px solid #34d399;
+            border-right: 6px solid #fbbf24;
             text-align: right;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
         }
@@ -198,9 +204,9 @@
 
         .slot.filled {
             border: 2px solid #34d399;
-            background: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.45);
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
         }
 
         .letters-grid {
@@ -260,7 +266,7 @@
         }
 
         .btn-clear {
-            background: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.35);
             color: #fca5a5;
             border: 1px solid rgba(239, 68, 68, 0.6);
         }
@@ -275,7 +281,7 @@
             font-size: var(--fs-m);
             margin-bottom: 0.4vh;
             font-weight: bold;
-            min-height: 2vh;
+            min-height: 2.2vh;
         }
 
         .footer {
@@ -285,13 +291,13 @@
             padding-top: 0.6vh;
         }
         .footer strong {
-            color: #34d399;
+            color: #fbbf24;
         }
 
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(1, 20, 15, 0.88);
+            background: rgba(1, 20, 15, 0.9);
             backdrop-filter: blur(12px);
             display: none;
             justify-content: center;
@@ -324,7 +330,7 @@
 
         .modal-title {
             font-size: var(--fs-l);
-            color: #34d399;
+            color: #fbbf24;
             margin-bottom: 10px;
             font-weight: 900;
         }
@@ -383,11 +389,14 @@
 
     <div class="game-container">
         <div>
-            <div class="header-brand">🧠 عمار بن ياسر</div>
-            <div class="sub-brand">تحدي الـ 1000 سؤال (200 مرحلة أسطورية)</div>
+            <!-- اسم بن ياسر البارز والواضح في الأعلى -->
+            <div class="brand-container">
+                <div class="header-brand">⭐ بن ياسر الأسطوري ⭐</div>
+                <div class="sub-brand">تحدي كلمة كراش الاحترافي (200 مرحلة)</div>
+            </div>
 
             <div class="top-bar">
-                <div class="score-badge">⭐ النقاط: <span id="scoreText">20</span></div>
+                <div class="score-badge">⭐ النقاط: <span id="scoreText">25</span></div>
                 <div class="helper-btns">
                     <button class="mini-btn" onclick="useHint()">مساعدة (-3)</button>
                     <button class="mini-btn" onclick="skipQuestion()">تخطي (-5)</button>
@@ -397,7 +406,7 @@
         </div>
 
         <div>
-            <div class="clue-box" id="clueText">جاري تحميل الأسئلة الأسطورية...</div>
+            <div class="clue-box" id="clueText">جاري تحميل المراحل...</div>
             <div class="answer-slots" id="answerSlots"></div>
             <div class="letters-grid" id="lettersGrid"></div>
         </div>
@@ -409,26 +418,26 @@
             </div>
             <div class="message" id="messageText"></div>
             <div class="footer">
-                تصميم وتطوير: <strong>عمار أصلاوي</strong>
+                الإصدار الخاص: <strong>عالم بن ياسر</strong>
             </div>
         </div>
     </div>
 
-    <!-- نافذة خريطة الـ 200 مرحلة -->
+    <!-- نافذة الخريطة -->
     <div class="modal" id="mapModal" onclick="closeMap()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title">🗺️ خريطة الـ 200 مرحلة</div>
+            <div class="modal-title">🗺️ خريطة مراحل بن ياسر</div>
             <div class="map-grid" id="mapGrid"></div>
             <button class="action-btn btn-submit" onclick="closeMap()" style="width:100%; padding:10px;">إغلاق الخريطة</button>
         </div>
     </div>
 
-    <!-- نافذة الجائزة عند إتمام المرحلة -->
+    <!-- نافذة الجائزة -->
     <div class="modal" id="rewardModal">
         <div class="modal-content">
             <div class="reward-icon">🏆</div>
             <div class="modal-title">أتممت المرحلة بنجاح!</div>
-            <p id="rewardText" style="color:#cbd5e1; font-size: var(--fs-m); margin-bottom: 15px;">رائع يا أسطورة، تمت إضافة المكافأة!</p>
+            <p id="rewardText" style="color:#cbd5e1; font-size: var(--fs-m); margin-bottom: 15px;">أداء أسطوري يا بطل، تمت إضافة المكافأة!</p>
             <button class="action-btn btn-submit" onclick="nextLevelAfterReward()" style="width:100%; padding:10px;">المرحلة التالية ➡️</button>
         </div>
     </div>
@@ -515,14 +524,14 @@
             allLevels.push(qList);
         }
 
-        let currentLevel = parseInt(localStorage.getItem("ammar_1000_lvl")) || 0;
-        let currentSubQ = parseInt(localStorage.getItem("ammar_1000_sub")) || 0;
-        let score = localStorage.getItem("ammar_1000_score") !== null ? parseInt(localStorage.getItem("ammar_1000_score")) : 20;
+        let currentLevel = parseInt(localStorage.getItem("banyaser_lvl")) || 0;
+        let currentSubQ = parseInt(localStorage.getItem("banyaser_sub")) || 0;
+        let score = localStorage.getItem("banyaser_score") !== null ? parseInt(localStorage.getItem("banyaser_score")) : 25;
         let selectedLetters = [];
 
         function updateScoreDisplay() {
             document.getElementById("scoreText").innerText = score;
-            localStorage.setItem("ammar_1000_score", score);
+            localStorage.setItem("banyaser_score", score);
         }
 
         function initGame() {
@@ -531,12 +540,12 @@
                 document.querySelector(".game-container").innerHTML = `
                     <div style="padding: 20px;">
                         <div class="reward-icon">👑</div>
-                        <div class="header-brand" style="font-size: 5.5vw;">أسطورة عمار بن ياسر</div>
-                        <h2 style="color:#34d399; margin: 15px 0;">أتممت الـ 1000 سؤال والـ 200 مرحلة بنجاح تام!</h2>
-                        <p style="color:#cbd5e1; font-size: 4vw; margin-bottom: 20px;">نقاطك الأسطورية النهائية: ${score} ⭐</p>
+                        <div class="header-brand" style="font-size: 5vw;">عالم بن ياسر الأسطوري</div>
+                        <h2 style="color:#34d399; margin: 15px 0;">أتممت جميع الـ 200 مرحلة بنجاح تام!</h2>
+                        <p style="color:#cbd5e1; font-size: 4vw; margin-bottom: 20px;">نقاطك النهائية: ${score} ⭐</p>
                         <button class="action-btn btn-submit" onclick="resetGame()" style="width:100%; padding:14px;">إعادة اللعب من جديد 🔄</button>
                     </div>
-                    <div class="footer">تصميم وتطوير: <strong>عمار أصلاوي</strong></div>
+                    <div class="footer">إصدار: <strong>بن ياسر</strong></div>
                 `;
                 playSound('success');
                 return;
@@ -611,7 +620,7 @@
 
             if (formedWord === qData.word) {
                 playSound('success');
-                score += 2;
+                score += 3;
                 updateScoreDisplay();
                 
                 currentSubQ++;
@@ -619,13 +628,13 @@
                     currentSubQ = 0;
                     document.getElementById("rewardModal").style.display = "flex";
                 } else {
-                    localStorage.setItem("ammar_1000_sub", currentSubQ);
+                    localStorage.setItem("banyaser_sub", currentSubQ);
                     initGame();
                 }
             } else {
                 playSound('error');
                 msg.style.color = "#fca5a5";
-                msg.innerText = "❌ خطأ، حاول مرة أخرى!";
+                msg.innerText = "❌ إجابة خاطئة، حاول مجدداً!";
                 setTimeout(clearSelection, 700);
             }
         }
@@ -633,14 +642,14 @@
         function nextLevelAfterReward() {
             document.getElementById("rewardModal").style.display = "none";
             currentLevel++;
-            localStorage.setItem("ammar_1000_lvl", currentLevel);
-            localStorage.setItem("ammar_1000_sub", currentSubQ);
+            localStorage.setItem("banyaser_lvl", currentLevel);
+            localStorage.setItem("banyaser_sub", currentSubQ);
             initGame();
         }
 
         function useHint() {
             if (score < 3) {
-                alert("نقاطك لا تكفي للمساعدة (تحتاج 3 نقاط)!");
+                alert("نقاطك لا تكفي (تحتاج 3 نقاط للمساعدة)!");
                 return;
             }
             score -= 3;
@@ -659,7 +668,7 @@
 
         function skipQuestion() {
             if (score < 5) {
-                alert("نقاطك لا تكفي لتخطي السؤال (تحتاج 5 نقاط)!");
+                alert("نقاطك لا تكفي للتخطي (تحتاج 5 نقاط)!");
                 return;
             }
             score -= 5;
@@ -671,8 +680,8 @@
                 currentSubQ = 0;
                 currentLevel++;
             }
-            localStorage.setItem("ammar_1000_lvl", currentLevel);
-            localStorage.setItem("ammar_1000_sub", currentSubQ);
+            localStorage.setItem("banyaser_lvl", currentLevel);
+            localStorage.setItem("banyaser_sub", currentSubQ);
             initGame();
         }
 
@@ -688,8 +697,8 @@
                     node.onclick = () => {
                         currentLevel = i;
                         currentSubQ = 0;
-                        localStorage.setItem("ammar_1000_lvl", currentLevel);
-                        localStorage.setItem("ammar_1000_sub", currentSubQ);
+                        localStorage.setItem("banyaser_lvl", currentLevel);
+                        localStorage.setItem("banyaser_sub", currentSubQ);
                         closeMap();
                         initGame();
                     };

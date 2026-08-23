@@ -2,560 +2,343 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحدي الكلمات الأسطوري - 300 مرحلة</title>
+    <!-- هذا السطر هو الأهم لجعل الموقع متجاوباً على الهواتف -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تحدي الكلمات الأسطوري - عمار بن ياسر</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+
+        :root {
+            --primary-color: #10b981;
+            --bg-color: radial-gradient(circle at center, #064e3b, #022c22, #021f18);
+            --container-bg: rgba(255, 255, 255, 0.06);
+            --text-color: #fff;
+            --accent-color: #34d399;
+            
+            /* وحدات قياس مرنة تتغير حسب حجم الشاشة */
+            --fs-xl: clamp(20px, 5vw, 32px);
+            --fs-l: clamp(18px, 4vw, 26px);
+            --fs-m: clamp(16px, 3.5vw, 20px);
+            --fs-s: clamp(13px, 3vw, 16px);
+            
+            --btn-size: clamp(40px, 12vw, 60px); /* الأزرار تصغر وتكبر */
+            --slot-size: clamp(35px, 11vw, 50px); /* المربعات تصغر وتكبر */
+        }
 
         * {
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
-            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* يزيل التحديد الأزرق عند الضغط */
         }
 
         body {
             margin: 0;
             padding: 0;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0e4c5b, #115e67, #083344);
+            background: radial-gradient(circle at center, #064e3b, #022c22, #021f18);
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #fff;
-            overflow: hidden;
-            position: relative;
+            color: var(--text-color);
+            overflow: hidden; /* لمنع التمرير */
+            position: fixed; /* لمنع الارتداد في iOS */
+            width: 100%;
+            height: 100%;
         }
 
+        /* خلفية متحركة */
+        .bg-glow {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), #059669);
+            filter: blur(150px);
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* علامات مائية مرنة */
+        .watermark-multi {
+            position: absolute;
+            font-size: 4vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .wm-1 { top: 10%; left: 15%; transform: rotate(-15deg); }
+        .wm-2 { top: 80%; right: 10%; transform: rotate(10deg); }
+        .wm-3 { bottom: 10%; left: 18%; transform: rotate(20deg); }
+        .wm-4 { top: 40%; right: 5%; }
+
+        /* حاوية اللعبة الرئيسية (تأخذ 90% من عرض الشاشة) */
         .game-container {
-            background: rgba(15, 76, 92, 0.45);
+            background: var(--container-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 255, 255, 0.18);
-            padding: 16px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            max-width: 410px;
-            width: 95%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 5vw; /* الحشو الداخلي يعتمد على حجم الشاشة */
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            width: 92vw;
+            max-width: 450px; /* حد أقصى للعرض لتبقى الأزرار مريحة */
+            max-height: 95vh; /* لمنع الخروج عن الشاشة طولياً */
             text-align: center;
             position: relative;
             z-index: 2;
-        }
-
-        /* الشريط العلوي */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .map-icon-btn {
-            background: linear-gradient(135deg, #facc15, #ca8a04);
-            border: 2px solid #fff;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            font-size: 18px;
-            transition: 0.2s;
-        }
-        .map-icon-btn:active { transform: scale(0.9); }
-
-        .level-title-badge {
-            font-size: 20px;
-            font-weight: 900;
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
-        }
-
-        .coins-badge {
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #fde047;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* صندوق اللغز */
-        .puzzle-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 10px;
-            margin-bottom: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            min-height: 110px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
-            color: #1e293b;
+            overflow-y: auto; /* للسماح بالتمرير إذا كان المحتوى طويلاً */
         }
 
-        .puzzle-img-text {
-            font-size: 32px;
-            margin-bottom: 4px;
+        .main-title {
+            font-size: var(--fs-xl);
+            font-weight: 900;
+            background: linear-gradient(135deg, #34d399, #6ee7b7, #a7f3d0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1vh;
         }
 
-        .puzzle-clue-text {
-            font-size: 14px;
+        .sub-title {
+            color: #94a3b8;
+            font-size: var(--fs-s);
             font-weight: 700;
-            color: #0f172a;
+            margin-bottom: 3vh;
         }
 
-        /* لوحة الكلمات */
-        .words-board {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            align-items: center;
-            margin-bottom: 12px;
-            max-height: 130px;
-            overflow-y: auto;
-            padding: 4px;
+        .clue-box {
+            font-size: var(--fs-m);
+            margin-bottom: 3vh;
+            color: #f8fafc;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1.5vh 4vw;
+            border-radius: 12px;
+            border-right: 4px solid #10b981;
         }
 
-        .word-row {
-            display: flex;
-            gap: 4px;
-            justify-content: center;
-        }
-
-        .letter-cell {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 6px;
+        /* منطقة الإجابة */
+        .answer-slots {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .letter-cell.revealed {
-            background: #facc15;
-            color: #1e293b;
-            border-color: #ca8a04;
-        }
-
-        .letter-cell.empty-slot {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-        }
-
-        /* عجلة الحروف المبعثرة */
-        .wheel-container {
-            position: relative;
-            width: 100%;
-            min-height: 100px;
-            margin: 0 auto 12px auto;
-            display: flex;
+            gap: 2vw; /* المسافة بين المربعات مرنة */
+            margin-bottom: 3vh;
+            min-height: 6vh;
             flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 6px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .wheel-btn {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-            color: #0f172a;
-            border: 2px solid #fff;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: 0.1s;
-        }
-
-        .wheel-btn:active {
-            background: #38bdf8;
-            color: #fff;
-            transform: scale(0.92);
-        }
-
-        /* أدوات التحكم السفلي */
-        .bottom-tools {
-            display: flex;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .tool-action-btn {
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #fff;
-            border-radius: 14px;
-            padding: 8px 12px;
-            color: #0f172a;
-            font-weight: bold;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            flex: 1;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .hint-btn {
-            background: rgba(255, 255, 255, 0.9);
-            flex: 1.5;
-            font-size: 14px;
-            color: #0f766e;
-        }
-
-        /* نافذة خريطة المراحل (300 مرحلة) */
-        .map-modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #093440, #041f26);
-            z-index: 10;
-            display: none;
-            flex-direction: column;
-            padding: 15px;
-            border-radius: 24px;
-        }
-
-        .map-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
-            padding-bottom: 8px;
-        }
-
-        .map-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow-y: auto;
-            max-height: 360px;
-            padding: 5px;
-        }
-
-        .map-level-item {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 15px;
+        .slot {
+            width: var(--slot-size);
+            height: var(--slot-size);
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            cursor: pointer;
+            font-size: var(--fs-l);
             font-weight: bold;
-            transition: 0.2s;
-        }
-
-        .map-level-item.unlocked {
-            background: rgba(16, 185, 129, 0.25);
-            border-color: #34d399;
             color: #34d399;
         }
 
-        .map-level-item.current {
-            background: #facc15;
-            color: #0f172a;
-            border-color: #eab308;
+        .slot.filled {
+            border: 2px solid #34d399;
+            background: rgba(16, 185, 129, 0.2);
         }
 
-        .map-level-item.locked {
-            opacity: 0.4;
-            cursor: not-allowed;
+        /* لوحة الحروف المبعثرة */
+        .letters-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3vw; /* المسافة بين الأزرار مرنة */
+            margin-bottom: 3vh;
         }
 
-        .msg-alert {
-            font-size: 13px;
+        .letter-btn {
+            width: var(--btn-size);
+            height: var(--btn-size);
+            flex-basis: calc(15% - 3vw); /* لجعل الأزرار تأخذ مساحة محددة وتلتف */
+            max-width: 55px; /* حد أقصى لحجم الزر */
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            font-size: var(--fs-m);
             font-weight: bold;
-            margin-top: 6px;
-            min-height: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .letter-btn:active {
+            transform: scale(0.9);
+        }
+
+        .letter-btn.used {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* أزرار التحكم */
+        .controls {
+            display: flex;
+            gap: 4vw;
+            margin-top: auto; /* لدفع الأزرار للأسفل */
+            padding-top: 1vh;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 1.5vh;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: var(--fs-s);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-clear {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-submit {
+            background: #10b981;
+            color: white;
+        }
+
+        .message {
+            font-size: var(--fs-s);
+            margin-top: 1vh;
+            font-weight: bold;
+            min-height: 3vh;
+        }
+
+        .footer {
+            margin-top: 2vh;
+            font-size: 3vw; /* حجم خط صغير جداً */
+            color: #64748b;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1vh;
+        }
+        .footer strong {
+            color: #34d399;
+        }
+        
+        /* تعديل خاص للشاشات الصغيرة جداً (مثل iPhone SE القديم) */
+        @media (max-height: 500px) {
+            .game-container { padding: 3vw; }
+            .main-title { margin-bottom: 0.5vh; }
+            .sub-title { margin-bottom: 1vh; }
+            .clue-box { margin-bottom: 1vh; padding: 1vh 3vw; }
+            .answer-slots { margin-bottom: 1vh; }
+            .letters-grid { margin-bottom: 1vh; }
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-glow"></div>
+    <div class="watermark-multi wm-1">عمار بن ياسر</div>
+    <div class="watermark-multi wm-2">عمار أصلاوي</div>
+    <div class="watermark-multi wm-3">⭐</div>
+    <div class="watermark-multi wm-4">🧠</div>
+
     <div class="game-container">
-        <!-- نافذة الخريطة -->
-        <div class="map-modal" id="mapModal">
-            <div class="map-modal-header">
-                <span style="font-weight: bold; font-size: 15px; color: #facc15;">🗺️ خريطة المراحل (300 مرحلة)</span>
-                <button onclick="toggleMap(false)" style="background:#ef4444; border:none; color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; font-weight:bold;">إغلاق ✕</button>
-            </div>
-            <div class="map-list" id="mapListContainer"></div>
+        <div class="main-title">تحدي الكلمات</div>
+        <div class="sub-title">فكر، اجمع الحروف، وحل اللغز</div>
+
+        <div class="clue-box" id="clueText">جاري تحميل اللغز...</div>
+
+        <div class="answer-slots" id="answerSlots"></div>
+        <div class="letters-grid" id="lettersGrid"></div>
+
+        <div class="controls">
+            <button class="action-btn btn-clear" onclick="clearSelection()">مسح 🔄</button>
+            <button class="action-btn btn-submit" onclick="checkWord()">تحقق ✅</button>
         </div>
 
-        <!-- الشريط العلوي -->
-        <div class="top-bar">
-            <button class="map-icon-btn" onclick="toggleMap(true)" title="خريطة المراحل">🗺️</button>
-            <div class="level-title-badge" id="levelTitle">مرحلة 1</div>
-            <div class="coins-badge"><span id="coinsCount">100</span> 🟡</div>
-        </div>
+        <div class="message" id="messageText"></div>
 
-        <!-- صندوق اللغز -->
-        <div class="puzzle-card">
-            <div class="puzzle-img-text" id="puzzleEmoji">🧠</div>
-            <div class="puzzle-clue-text" id="puzzleClue">جاري التحميل...</div>
-        </div>
-
-        <!-- لوحة الكلمات -->
-        <div class="words-board" id="wordsBoard"></div>
-
-        <!-- الحروف المبعثرة -->
-        <div class="wheel-container" id="wheelContainer"></div>
-
-        <!-- الرسائل والتنبيهات -->
-        <div class="msg-alert" id="msgAlert"></div>
-
-        <!-- شريط الأدوات السفلي -->
-        <div class="bottom-tools">
-            <button class="tool-action-btn" onclick="resetCurrentLevel()">🔄 إعادة</button>
-            <button class="tool-action-btn hint-btn" onclick="useHint()">💡 تلميح (10 🟡)</button>
-            <button class="tool-action-btn" onclick="nextLevelBtn()">⏭️ التالي</button>
+        <div class="footer">
+            تصميم وتطوير: <strong>عمار أصلاوي</strong>
         </div>
     </div>
 
     <script>
-        // قاعدة بيانات أساسية ضخمة يتم تدويرها وتوليدها لتغطي 300 مرحلة كاملة
-        const baseBank = [
-            { emoji: "🧊", clue: "مكعب ثلج ذائب", answer: "ثلج" },
-            { emoji: "🎮", clue: "جهاز ألعاب إلكترونية شهير", answer: "بلايستيشن" },
-            { emoji: "📦", clue: "صندوق خشبي أثري", answer: "صندوق" },
-            { emoji: "🧠", clue: "عضو التفكير والذكاء", answer: "دماغ" },
-            { emoji: "📚", clue: "أطلب العلم ولو في...", answer: "الصين" },
-            { emoji: "⭐", clue: "رمز النجاح والتألق السماوي", answer: "نجمة" },
-            { emoji: "🌊", clue: "مسطح مائي واسع وعميق", answer: "محيط" },
-            { emoji: "🚗", clue: "وسيلة نقل برية سريعة ذات إطارات", answer: "سيارة" },
-            { emoji: "🌙", clue: "يظهر في السماء ليلاً وينير الظلام", answer: "قمر" },
-            { emoji: "🍎", clue: "فاكهة حمراء شهيرة ومفيدة للصحة", answer: "تفاحة" },
-            { emoji: "🐪", clue: "حيوان يُسمى سفينة الصحراء", answer: "جمل" },
-            { emoji: "🗼", clue: "عاصمة دولة فرنسا الشهيرة", answer: "باريس" },
-            { emoji: "🗺️", clue: "رسم توضيحي لسطح الأرض أو جزء منه", answer: "خريطة" },
-            { emoji: "🦁", clue: "يُلقب بملك الغابة", answer: "أسد" },
-            { emoji: "⚽", clue: "أشهر رياضة جماعية في العالم", answer: "كرة" },
-            { emoji: "⏱️", clue: "أداة قياس الوقت والثواني", answer: "ساعة" },
-            { emoji: "💻", q: "جهاز حاسوب محمول ذكي", answer: "لابتوب" },
-            { emoji: "🌹", clue: "نبات جميل ذو رائحة عطرة", answer: "وردة" },
-            { emoji: "✈️", clue: "وسيلة سفر جوية سريعة", answer: "طائرة" },
-            { emoji: "💡", clue: "مصدر للإضاءة والاختراعات", answer: "مصباح" }
+        // مصفوفة المراحل (تم إضافة كلمة أطول للتجربة)
+        const levels = [
+            { clue: "حيوان يُسمى سفينة الصحراء؟", word: "جمل", scrambled: "لمج" },
+            { clue: "عاصمة دولة اليابان؟", word: "طوكيو", scrambled: "يوتكو" },
+            { clue: "أكبر كوكب في المجموعة الشمسية؟", word: "المشتري", scrambled: "ريتمشال" },
+            { clue: "عنصر كيميائي رمزه O؟", word: "أكسجين", scrambled: "نيجكسأ" },
+            { clue: "جهاز ألعاب من شركة سوني؟", word: "بلايستيشن", scrambled: "يشيلاستيبن" }
         ];
 
-        // توليد 300 مرحلة بشكل تلقائي ومنظم لضمان تنوع الألغاز
-        const gameLevels = [];
-        for (let i = 1; i <= 300; i++) {
-            let base = baseBank[(i - 1) % baseBank.length];
-            // إضافة رقم المرحلة لتمييز المراحل المتقدمة
-            gameLevels.push({
-                id: i,
-                emoji: base.emoji,
-                clue: `[مرحلة ${i}] ${base.clue}`,
-                answer: base.answer
-            });
-        }
+        let currentLevel = parseInt(localStorage.getItem("mesh_level")) || 0;
+        let selectedLetters = [];
 
-        let currentLevelIndex = parseInt(localStorage.getItem("game_lvl_300")) || 0;
-        let coins = parseInt(localStorage.getItem("game_coins_300")) || 100;
-        let maxUnlocked = parseInt(localStorage.getItem("game_max_300")) || currentLevelIndex;
-        let userInput = [];
-
-        function initGame() {
-            if (currentLevelIndex >= gameLevels.length) {
-                currentLevelIndex = 0;
-            }
-            const lvl = gameLevels[currentLevelIndex];
-            document.getElementById("levelTitle").innerText = `مرحلة ${lvl.id}`;
-            document.getElementById("coinsCount").innerText = coins;
-            document.getElementById("puzzleEmoji").innerText = lvl.emoji;
-            document.getElementById("puzzleClue").innerText = lvl.clue;
-            document.getElementById("msgAlert").innerText = "";
-            
-            userInput = [];
-            renderBoard();
-            renderWheel();
-        }
-
-        function renderBoard() {
-            const board = document.getElementById("wordsBoard");
-            board.innerHTML = "";
-            const targetWord = gameLevels[currentLevelIndex].answer;
-
-            let row = document.createElement("div");
-            row.className = "word-row";
-
-            for (let i = 0; i < targetWord.length; i++) {
-                let cell = document.createElement("div");
-                cell.className = "letter-cell";
-                if (userInput[i]) {
-                    cell.innerText = userInput[i];
-                    cell.classList.add("revealed");
-                } else {
-                    cell.classList.add("empty-slot");
-                    cell.innerText = "";
-                }
-                row.appendChild(cell);
-            }
-            board.appendChild(row);
-        }
-
-        function renderWheel() {
-            const wheel = document.getElementById("wheelContainer");
-            wheel.innerHTML = "";
-            const targetWord = gameLevels[currentLevelIndex].answer;
-            
-            let letters = targetWord.split('');
-            let extraLetters = ['ب', 'م', 'ر', 'س', 'ل', 'ك', 'د', 'ت', 'ن', 'ي', 'أ', 'ق'];
-            for(let i = 0; i < 4; i++) {
-                let randomChar = extraLetters[Math.floor(Math.random() * extraLetters.length)];
-                letters.push(randomChar);
-            }
-            // خلط الحروف عشوائياً
-            letters.sort(() => Math.random() - 0.5);
-
-            letters.forEach(char => {
-                let btn = document.createElement("button");
-                btn.className = "wheel-btn";
-                btn.innerText = char;
-                btn.onclick = () => {
-                    const targetWord = gameLevels[currentLevelIndex].answer;
-                    if (userInput.length < targetWord.length) {
-                        userInput.push(char);
-                        renderBoard();
-                        checkVictory();
-                    }
-                };
-                wheel.appendChild(btn);
-            });
-        }
-
-        function checkVictory() {
-            const targetWord = gameLevels[currentLevelIndex].answer;
-            if (userInput.length === targetWord.length) {
-                let formedWord = userInput.join("");
-                const msg = document.getElementById("msgAlert");
-                if (formedWord === targetWord) {
-                    msg.style.color = "#34d399";
-                    msg.innerText = "🎉 إجابة صحيحة أسطورية! (+15 نقطة)";
-                    coins += 15;
-                    localStorage.setItem("game_coins_300", coins);
-                    document.getElementById("coinsCount").innerText = coins;
-
-                    currentLevelIndex++;
-                    if (currentLevelIndex > maxUnlocked) {
-                        maxUnlocked = currentLevelIndex;
-                        localStorage.setItem("game_max_300", maxUnlocked);
-                    }
-                    localStorage.setItem("game_lvl_300", currentLevelIndex);
-
-                    setTimeout(initGame, 1300);
-                } else {
-                    msg.style.color = "#f87171";
-                    msg.innerText = "❌ إجابة خاطئة، حاول مرة أخرى!";
-                    setTimeout(resetCurrentLevel, 1000);
-                }
-            }
-        }
-
-        function resetCurrentLevel() {
-            userInput = [];
-            document.getElementById("msgAlert").innerText = "";
-            renderBoard();
-        }
-
-        function useHint() {
-            if (coins < 10) {
-                alert("نقاطك غير كافية للحصول على تلميح!");
+        function initLevel() {
+            if (currentLevel >= levels.length) {
+                document.querySelector(".game-container").innerHTML = `
+                    <div class="main-title" style="font-size: 8vw;">عمار بن ياسر</div>
+                    <h1 style="color:#34d399; font-size:6vw; margin:2vh 0;">🏆 أسطورة الكلمات!</h1>
+                    <p style="color:#cbd5e1; font-size:4vw; margin-bottom:3vh;">أتممت جميع مراحل تحدي الكلمات بنجاح!</p>
+                    <button class="action-btn btn-submit" onclick="resetGame()" style="width:100%; padding:2vh;">إعادة اللعب من جديد 🔄</button>
+                    <div class="footer" style="margin-top:3vh;">تصميم وتطوير: <strong>عمار أصلاوي</strong></div>
+                `;
                 return;
             }
-            coins -= 10;
-            localStorage.setItem("game_coins_300", coins);
-            document.getElementById("coinsCount").innerText = coins;
 
-            const targetWord = gameLevels[currentLevelIndex].answer;
-            for (let i = 0; i < targetWord.length; i++) {
-                if (!userInput[i]) {
-                    userInput[i] = targetWord[i];
-                    break;
-                }
-            }
-            renderBoard();
-            checkVictory();
+            const data = levels[currentLevel];
+            document.getElementById("clueText").innerText = `لغز (${currentLevel + 1}/${levels.length}): ${data.clue}`;
+            selectedLetters = [];
+            document.getElementById("messageText").innerText = "";
+
+            renderSlots();
+            renderLetters();
         }
 
-        function nextLevelBtn() {
-            if (currentLevelIndex < gameLevels.length - 1) {
-                currentLevelIndex++;
-                localStorage.setItem("game_lvl_300", currentLevelIndex);
-                initGame();
-            } else {
-                alert("لقد وصلت إلى المرحلة النهائية الأخيرة (300)!");
-            }
-        }
+        function renderSlots() {
+            const slotsContainer = document.getElementById("answerSlots");
+            slotsContainer.innerHTML = "";
+            const wordLength = levels[currentLevel].word.length;
 
-        function toggleMap(show) {
-            const modal = document.getElementById("mapModal");
-            if (show) {
-                modal.style.display = "flex";
-                renderMapList();
-            } else {
-                modal.style.display = "none";
+            for (let i = 0; i < wordLength; i++) {
+                const slot = document.createElement("div");
+                slot.className = "slot" + (selectedLetters[i] ? " filled" : "");
+                slot.innerText = selectedLetters[i] || "";
+                
+                // النقر على الخانة لإلغاء الحرف
+                slot.onclick = () => {
+                    if(selectedLetters[i]) {
+                        selectedLetters.splice(i, 1);
+                        renderSlots();
+                        renderLetters();
+                    }
+                };
+                slotsContainer.appendChild(slot);
             }
         }
 
-        function renderMapList() {
-            const container = document.getElementById("mapListContainer");
-            container.innerHTML = "";
-            gameLevels.forEach((lvl, idx) => {
-                let item = document.createElement("div");
-                let statusClass = "";
-                let statusText = "🔒 مقفلة";
+        function renderLetters() {
+            const gridContainer = document.getElementById("lettersGrid");
+            gridContainer.innerHTML = "";
+            const scrambled = levels[currentLevel].scrambled;
+            const wordLength = levels[currentLevel].word.length;
 
-                if (idx === currentLevelIndex) {
-                    statusClass = "current";
-                    statusText = "📍 الحالية";
-                } else if (idx <= maxUnlocked) {
-                    statusClass = "unlocked";
-                    statusText = "⭐ مكتملة";
-                } else {
-                    statusClass = "locked";
-                }
-
-                item.className = `map-level-item ${statusClass}`;
-                item.innerHTML = `<span>المرحلة ${lvl.id}</span><span>${statusText}</span>`;
-
-                if (idx <= maxUnlocked) {
-                    item.onclick = () => {
-                        currentLevelIndex = idx;
-                        localStorage.setItem("game_lvl_300", currentLevelIndex);
-                        toggleMap(false);
-                        initGame();
-                    };
-                }
-                container.appendChild(item);
-            });
-        }
-
-        initGame();
-    </script>
-</body>
-</html>
+            scrambled.split("").forEach((char, index) => {
+                const btn = document.createElement("button");
+                btn.className = "letter-btn";
+                btn.innerText = char;
+                
+                // حساب كم مرة تم استخدام هذا الحرف في الإجابة
+                const usedCount = selectedLetters

@@ -434,7 +434,6 @@
     </div>
 
     <script>
-        // نظام الصوت التفاعلي المتقدم
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -470,31 +469,50 @@
 
         function playClickSound() { playSound('click'); }
 
-        // مولد آلي ذكي لإنشاء 1000 سؤال موزعة على 200 مرحلة (كل مرحلة 5 أسئلة) بدقة مذهلة
         const basePool = [
-            { c: "حيوان سفينة الصحراء؟", a: "جمل", s: "لمج" },
-            { c: "عاصمة اليابان؟", a: "طوكيو", s: "يوتكو" },
-            { c: "أكبر كوكب شمسي؟", a: "المشتري", s: "ريتمشال" },
-            { c: "عنصر رمزه O؟", a: "أكسجين", s: "نيجكسأ" },
-            { c: "جهاز ألعاب سوني؟", a: "بلايستيشن", s: "يشيلاستيبن" },
-            { c: "عاصمة مصر؟", a: "القاهرة", s: "ةقاهلر" },
-            { c: "أسرع حيوان بري؟", a: "فهد", s: "دهف" },
-            { c: "أكبر محيط بالعالم؟", a: "الهادي", s: "يالهدا" },
-            { c: "معدن نفيس أصفر؟", a: "ذهب", s: "هبد" },
-            { c: "عاصمة فرنسا؟", a: "باريس", s: "سيراپ" }
+            { c: "حيوان سفينة الصحراء؟", a: "جمل" },
+            { c: "عاصمة اليابان؟", a: "طوكيو" },
+            { c: "أكبر كوكب شمسي؟", a: "المشتري" },
+            { c: "عنصر رمزه O؟", a: "أكسجين" },
+            { c: "جهاز ألعاب سوني؟", a: "بلايستيشن" },
+            { c: "عاصمة مصر؟", a: "القاهرة" },
+            { c: "أسرع حيوان بري؟", a: "فهد" },
+            { c: "أكبر محيط بالعالم؟", a: "الهادي" },
+            { c: "معدن نفيس أصفر؟", a: "ذهب" },
+            { c: "عاصمة فرنسا؟", a: "باريس" },
+            { c: "عاصمة السعودية؟", a: "الرياض" },
+            { c: "أقرب كوكب للشمس؟", a: "عطارد" },
+            { c: "مفتاح قفل الأبواب؟", a: "مفتاح" },
+            { c: "لون السماء الصافية؟", a: "ازرق" },
+            { c: "كتاب المسلمين المقدس؟", a: "قرآن" }
         ];
+
+        // دالة لخلط وتوليد الحروف تلقائياً لضمان توفر حروف الجواب دائماً
+        function generateScrambled(word) {
+            let letters = word.split('');
+            const extraPool = ['ا', 'ب', 'ت', 'ج', 'ح', 'د', 'ر', 'س', 'ش', 'ص', 'ط', 'ع', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'هـ', 'و', 'ي'];
+            
+            // إضافة حروف إضافية عشوائية إذا كان عدد الحروف أقل من 8 لزيادة المتعة
+            while(letters.length < 8) {
+                let randomLetter = extraPool[Math.floor(Math.random() * extraPool.length)];
+                if(!letters.includes(randomLetter)) {
+                    letters.push(randomLetter);
+                }
+            }
+            
+            // خلط الحروف عشوائياً
+            return letters.sort(() => Math.random() - 0.5).join('');
+        }
 
         const allLevels = [];
         for (let i = 0; i < 200; i++) {
             const qList = [];
             for (let j = 0; j < 5; j++) {
                 const baseItem = basePool[(i + j) % basePool.length];
-                // تنويع الأسئلة ديناميكياً بوضع بصمة المرحلة لضمان تميز كل سؤال
-                qList.clone = true;
                 qList.push({
                     clue: `مرحلة ${i+1} - سؤال ${j+1}: ${baseItem.c}`,
                     word: baseItem.a,
-                    scrambled: baseItem.s
+                    scrambled: generateScrambled(baseItem.a)
                 });
             }
             allLevels.push(qList);
@@ -528,7 +546,7 @@
             }
 
             const qData = allLevels[currentLevel][currentSubQ];
-            document.getElementById("clueText").innerText = `مرحلة ${currentLevel + 1} (سؤال ${currentSubQ + 1}/5): ${qData.clue}`;
+            document.getElementById("clueText").innerText = qData.clue;
             selectedLetters = [];
             document.getElementById("messageText").innerText = "";
 

@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- هذا السطر هو الأهم لجعل الموقع متجاوباً على الهواتف -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تحدي الكلمات الأسطوري - عمار بن ياسر</title>
     <style>
@@ -11,24 +10,24 @@
         :root {
             --primary-color: #10b981;
             --bg-color: radial-gradient(circle at center, #064e3b, #022c22, #021f18);
-            --container-bg: rgba(255, 255, 255, 0.06);
+            --container-bg: rgba(255, 255, 255, 0.08);
             --text-color: #fff;
             --accent-color: #34d399;
             
-            /* وحدات قياس مرنة تتغير حسب حجم الشاشة */
-            --fs-xl: clamp(20px, 5vw, 32px);
-            --fs-l: clamp(18px, 4vw, 26px);
-            --fs-m: clamp(16px, 3.5vw, 20px);
-            --fs-s: clamp(13px, 3vw, 16px);
+            /* تكبير أحجام الخطوط والعناصر لتملأ الشاشة بشكل أفضل */
+            --fs-xl: clamp(24px, 6vw, 38px);
+            --fs-l: clamp(22px, 5vw, 32px);
+            --fs-m: clamp(18px, 4.5vw, 24px);
+            --fs-s: clamp(15px, 3.5vw, 18px);
             
-            --btn-size: clamp(40px, 12vw, 60px); /* الأزرار تصغر وتكبر */
-            --slot-size: clamp(35px, 11vw, 50px); /* المربعات تصغر وتكبر */
+            --btn-size: clamp(50px, 14vw, 75px);   /* تكبير الأزرار */
+            --slot-size: clamp(45px, 13vw, 65px);  /* تكبير مربعات الحروف */
         }
 
         * {
             box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
-            -webkit-tap-highlight-color: transparent; /* يزيل التحديد الأزرق عند الضغط */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -40,13 +39,12 @@
             justify-content: center;
             align-items: center;
             color: var(--text-color);
-            overflow: hidden; /* لمنع التمرير */
-            position: fixed; /* لمنع الارتداد في iOS */
+            overflow: hidden;
+            position: fixed;
             width: 100%;
             height: 100%;
         }
 
-        /* خلفية متحركة */
         .bg-glow {
             position: absolute;
             width: 100vw;
@@ -57,10 +55,9 @@
             z-index: 0;
         }
 
-        /* علامات مائية مرنة */
         .watermark-multi {
             position: absolute;
-            font-size: 4vw;
+            font-size: 5vw;
             font-weight: 900;
             color: rgba(255, 255, 255, 0.03);
             pointer-events: none;
@@ -71,25 +68,25 @@
         .wm-3 { bottom: 10%; left: 18%; transform: rotate(20deg); }
         .wm-4 { top: 40%; right: 5%; }
 
-        /* حاوية اللعبة الرئيسية (تأخذ 90% من عرض الشاشة) */
+        /* زيادة عرض الحاوية لتأخذ مساحة أكبر من الشاشة */
         .game-container {
             background: var(--container-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 5vw; /* الحشو الداخلي يعتمد على حجم الشاشة */
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-            width: 92vw;
-            max-width: 450px; /* حد أقصى للعرض لتبقى الأزرار مريحة */
-            max-height: 95vh; /* لمنع الخروج عن الشاشة طولياً */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6vw 5vw;
+            border-radius: 30px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+            width: 96vw;     /* عرض أكبر للشاشة */
+            max-width: 550px; /* زيادة الحد الأقصى للعرض ليكون الحجم كبير ومريح */
+            max-height: 96vh;
             text-align: center;
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            overflow-y: auto; /* للسماح بالتمرير إذا كان المحتوى طويلاً */
+            overflow-y: auto;
         }
 
         .main-title {
@@ -105,71 +102,71 @@
             color: #94a3b8;
             font-size: var(--fs-s);
             font-weight: 700;
-            margin-bottom: 3vh;
+            margin-bottom: 2.5vh;
         }
 
         .clue-box {
             font-size: var(--fs-m);
-            margin-bottom: 3vh;
+            margin-bottom: 2.5vh;
             color: #f8fafc;
             font-weight: 700;
-            background: rgba(0, 0, 0, 0.25);
-            padding: 1.5vh 4vw;
-            border-radius: 12px;
-            border-right: 4px solid #10b981;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2vh 4vw;
+            border-radius: 15px;
+            border-right: 5px solid #10b981;
+            text-align: right;
         }
 
-        /* منطقة الإجابة */
         .answer-slots {
             display: flex;
             justify-content: center;
-            gap: 2vw; /* المسافة بين المربعات مرنة */
+            gap: 2.5vw;
             margin-bottom: 3vh;
-            min-height: 6vh;
+            min-height: 7vh;
             flex-wrap: wrap;
         }
 
         .slot {
             width: var(--slot-size);
             height: var(--slot-size);
-            background: rgba(255, 255, 255, 0.08);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: var(--fs-l);
             font-weight: bold;
             color: #34d399;
+            cursor: pointer;
         }
 
         .slot.filled {
             border: 2px solid #34d399;
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.3);
         }
 
-        /* لوحة الحروف المبعثرة */
         .letters-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 3vw; /* المسافة بين الأزرار مرنة */
+            gap: 3.5vw;
             margin-bottom: 3vh;
         }
 
         .letter-btn {
             width: var(--btn-size);
             height: var(--btn-size);
-            flex-basis: calc(15% - 3vw); /* لجعل الأزرار تأخذ مساحة محددة وتلتف */
-            max-width: 55px; /* حد أقصى لحجم الزر */
+            flex-basis: calc(18% - 3.5vw);
+            max-width: 70px;
             background: linear-gradient(135deg, #059669, #047857);
             color: white;
             border: none;
-            font-size: var(--fs-m);
+            font-size: var(--fs-l);
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
             transition: all 0.15s ease;
             display: flex;
             justify-content: center;
@@ -185,62 +182,52 @@
             pointer-events: none;
         }
 
-        /* أزرار التحكم */
         .controls {
             display: flex;
             gap: 4vw;
-            margin-top: auto; /* لدفع الأزرار للأسفل */
+            margin-top: auto;
             padding-top: 1vh;
         }
 
         .action-btn {
             flex: 1;
-            padding: 1.5vh;
+            padding: 1.8vh;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: var(--fs-s);
+            font-size: var(--fs-m);
             cursor: pointer;
             transition: 0.2s;
         }
 
         .btn-clear {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.25);
             color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.4);
+            border: 1px solid rgba(239, 68, 68, 0.5);
         }
 
         .btn-submit {
             background: #10b981;
             color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
 
         .message {
-            font-size: var(--fs-s);
-            margin-top: 1vh;
+            font-size: var(--fs-m);
+            margin-top: 1.5vh;
             font-weight: bold;
-            min-height: 3vh;
+            min-height: 3.5vh;
         }
 
         .footer {
             margin-top: 2vh;
-            font-size: 3vw; /* حجم خط صغير جداً */
-            color: #64748b;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 1vh;
+            font-size: 3.5vw;
+            color: #94a3b8;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 1.5vh;
         }
         .footer strong {
             color: #34d399;
-        }
-        
-        /* تعديل خاص للشاشات الصغيرة جداً (مثل iPhone SE القديم) */
-        @media (max-height: 500px) {
-            .game-container { padding: 3vw; }
-            .main-title { margin-bottom: 0.5vh; }
-            .sub-title { margin-bottom: 1vh; }
-            .clue-box { margin-bottom: 1vh; padding: 1vh 3vw; }
-            .answer-slots { margin-bottom: 1vh; }
-            .letters-grid { margin-bottom: 1vh; }
         }
     </style>
 </head>
@@ -274,7 +261,6 @@
     </div>
 
     <script>
-        // مصفوفة المراحل (تم إضافة كلمة أطول للتجربة)
         const levels = [
             { clue: "حيوان يُسمى سفينة الصحراء؟", word: "جمل", scrambled: "لمج" },
             { clue: "عاصمة دولة اليابان؟", word: "طوكيو", scrambled: "يوتكو" },
@@ -290,8 +276,8 @@
             if (currentLevel >= levels.length) {
                 document.querySelector(".game-container").innerHTML = `
                     <div class="main-title" style="font-size: 8vw;">عمار بن ياسر</div>
-                    <h1 style="color:#34d399; font-size:6vw; margin:2vh 0;">🏆 أسطورة الكلمات!</h1>
-                    <p style="color:#cbd5e1; font-size:4vw; margin-bottom:3vh;">أتممت جميع مراحل تحدي الكلمات بنجاح!</p>
+                    <h1 style="color:#34d399; font-size:7vw; margin:2vh 0;">🏆 أسطورة الكلمات!</h1>
+                    <p style="color:#cbd5e1; font-size:4.5vw; margin-bottom:3vh;">أتممت جميع مراحل تحدي الكلمات بنجاح!</p>
                     <button class="action-btn btn-submit" onclick="resetGame()" style="width:100%; padding:2vh;">إعادة اللعب من جديد 🔄</button>
                     <div class="footer" style="margin-top:3vh;">تصميم وتطوير: <strong>عمار أصلاوي</strong></div>
                 `;
@@ -317,7 +303,6 @@
                 slot.className = "slot" + (selectedLetters[i] ? " filled" : "");
                 slot.innerText = selectedLetters[i] || "";
                 
-                // النقر على الخانة لإلغاء الحرف
                 slot.onclick = () => {
                     if(selectedLetters[i]) {
                         selectedLetters.splice(i, 1);
@@ -333,12 +318,58 @@
             const gridContainer = document.getElementById("lettersGrid");
             gridContainer.innerHTML = "";
             const scrambled = levels[currentLevel].scrambled;
-            const wordLength = levels[currentLevel].word.length;
 
-            scrambled.split("").forEach((char, index) => {
+            scrambled.split("").forEach((char) => {
                 const btn = document.createElement("button");
                 btn.className = "letter-btn";
                 btn.innerText = char;
                 
-                // حساب كم مرة تم استخدام هذا الحرف في الإجابة
-                const usedCount = selectedLetters
+                btn.onclick = () => {
+                    const wordLength = levels[currentLevel].word.length;
+                    if (selectedLetters.length < wordLength) {
+                        selectedLetters.push(char);
+                        btn.classList.add('used');
+                        renderSlots();
+                    }
+                };
+                gridContainer.appendChild(btn);
+            });
+        }
+
+        function clearSelection() {
+            selectedLetters = [];
+            document.querySelectorAll('.letter-btn').forEach(btn => {
+                btn.classList.remove('used');
+            });
+            renderSlots();
+        }
+
+        function checkWord() {
+            const data = levels[currentLevel];
+            const formedWord = selectedLetters.join("");
+            const msg = document.getElementById("messageText");
+
+            if (formedWord === data.word) {
+                msg.style.color = "#34d399";
+                msg.innerText = "🎉 إجابة صحيحة!";
+                currentLevel++;
+                localStorage.setItem("mesh_level", currentLevel);
+                setTimeout(initLevel, 1500);
+            } else {
+                msg.style.color = "#fca5a5";
+                msg.innerText = "❌ خطأ، حاول مرة أخرى!";
+                setTimeout(clearSelection, 800);
+            }
+        }
+
+        function resetGame() {
+            localStorage.removeItem("mesh_level");
+            currentLevel = 0;
+            location.reload();
+        }
+
+        initLevel();
+    </script>
+</body>
+</html>
+

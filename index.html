@@ -1,163 +1,503 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عمار بن ياسر - خبير الأمن السيبراني والبرمجة</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0b0f19; color: #00ff66; height: 100vh; display: flex; flex-direction: column; }
-        
-        /* الهيدر */
-        header { background: #111827; padding: 12px; text-align: center; border-bottom: 2px solid #00ff66; box-shadow: 0 0 15px rgba(0, 255, 102, 0.2); }
-        header h1 { font-size: 18px; color: #00ff66; margin-bottom: 3px; text-shadow: 0 0 5px rgba(0, 255, 102, 0.5); }
-        header p { font-size: 11px; color: #9ca3af; }
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-        /* شريط إدخال مفتاح الـ API */
-        .api-bar { background: #1f2937; padding: 8px 15px; display: flex; gap: 8px; border-bottom: 1px solid #374151; align-items: center; }
-        .api-bar input { flex: 1; padding: 6px 10px; background: #0b0f19; border: 1px solid #4b5563; color: #fff; border-radius: 4px; font-size: 12px; outline: none; }
-        .api-bar button { padding: 6px 12px; background: #374151; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+public class AmmarYasserGame : MonoBehaviour
+{
+    // =========================================================
+    // هذا السكربت الواحد يدير اللعبة كلها
+    // =========================================================
 
-        /* صندوق المحادثة */
-        .chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: radial-gradient(circle, #111827 0%, #0b0f19 100%); }
-        .message { padding: 12px 16px; border-radius: 12px; max-width: 88%; line-height: 1.6; font-size: 14px; word-wrap: break-word; white-space: pre-wrap; }
-        .user { background: #1f2937; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 2px; border: 1px solid #374151; }
-        .ai { background: #111827; color: #00ff66; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #00ff66; box-shadow: 0 0 10px rgba(0, 255, 102, 0.1); }
-        
-        /* شريط الإدخال */
-        .input-box { display: flex; padding: 12px; background: #111827; border-top: 1px solid #1f2937; gap: 8px; }
-        .input-box input { flex: 1; padding: 12px; border: 1px solid #374151; border-radius: 8px; background: #0b0f19; color: #fff; outline: none; font-size: 14px; }
-        .input-box input:focus { border-color: #00ff66; }
-        .input-box button { padding: 0 20px; background: #00ff66; color: #0b0f19; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.3s; }
-        .input-box button:hover { background: #00cc52; box-shadow: 0 0 10px rgba(0, 255, 102, 0.5); }
-    </style>
-</head>
-<body>
+    public static AmmarYasserGame Instance;
 
-    <header>
-        <h1>⚡ عمار بن ياسر ⚡</h1>
-        <p>نظام ذكاء اصطناعي (شات جي بي تي بدون قيود) - أمن سيبراني وبرمجة متقدمة</p>
-    </header>
+    [Header("PLAYER")]
+    public CharacterController player;
+    public float forwardSpeed = 8f;
+    public float laneDistance = 3f;
+    public float laneChangeSpeed = 12f;
+    public float jumpForce = 8f;
+    public float gravity = -25f;
 
-    <!-- شريط لتخزين مفتاح الـ API الخاص بك -->
-    <div class="api-bar">
-        <input type="password" id="apiKeyInput" placeholder="أدخل مفتاح OpenAI API هنا...">
-        <button onclick="saveApiKey()">حفظ المفتاح</button>
-    </div>
+    [Header("SPAWNING")]
+    public GameObject trainPrefab;
+    public GameObject coinPrefab;
+    public float spawnDistance = 80f;
+    public float trainSpawnTime = 2f;
+    public float coinSpawnTime = 1f;
 
-    <div class="chat-container" id="chatContainer">
-        <div class="message ai">أهلاً بك يا صديقي في نظام "عمار بن ياسر". أنا جاهز الآن للإجابة على أصعب الأسئلة البرمجية، الأسرار التقنية، ومواضيع الأمن السيبراني بدون قيود وبقوة شات جي بي تي. أدخل مفتاح الـ API في الأعلى وابدأ بالسؤال.</div>
-    </div>
+    [Header("UI")]
+    public Text scoreText;
+    public Text coinText;
+    public Text gameOverText;
+    public Button restartButton;
 
-    <div class="input-box">
-        <input type="text" id="userInput" placeholder="اطرح أي سؤال مهما كانت صعوبته..." onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()">إرسال</button>
-    </div>
+    [Header("SETTINGS")]
+    public int startingLane = 1;
+    public float minimumSwipe = 50f;
 
-    <script>
-        // حفظ مفتاح الـ API في الذاكرة المحلية للجهاز
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            if (key) {
-                localStorage.setItem('openai_api_key', key);
-                alert("تم حفظ مفتاح الـ API بنجاح يا عمار!");
-            } else {
-                alert("الرجاء إدخال مفتاح صالح.");
-            }
+    private int currentLane;
+    private float verticalVelocity;
+
+    private int score;
+    private int coins;
+
+    private float trainTimer;
+    private float coinTimer;
+    private float scoreTimer;
+
+    private bool gameOver;
+
+    private Vector2 touchStart;
+    private bool touching;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void Start()
+    {
+        Time.timeScale = 1f;
+
+        currentLane = startingLane;
+
+        score = 0;
+        coins = 0;
+
+        gameOver = false;
+
+        if (gameOverText != null)
+            gameOverText.gameObject.SetActive(false);
+
+        if (restartButton != null)
+            restartButton.gameObject.SetActive(false);
+
+        UpdateUI();
+    }
+
+    void Update()
+    {
+        if (gameOver)
+            return;
+
+        PlayerMovement();
+
+        MobileControls();
+
+        SpawnObjects();
+
+        UpdateScore();
+    }
+
+    // =========================================================
+    // حركة اللاعب
+    // =========================================================
+
+    void PlayerMovement()
+    {
+        float targetX = (currentLane - 1) * laneDistance;
+
+        Vector3 position = player.transform.position;
+
+        float newX = Mathf.Lerp(
+            position.x,
+            targetX,
+            laneChangeSpeed * Time.deltaTime
+        );
+
+        if (player.isGrounded && verticalVelocity < 0)
+        {
+            verticalVelocity = -2f;
         }
 
-        // استرجاع المفتاح المحفوظ عند الفتح
-        window.onload = function() {
-            const savedKey = localStorage.getItem('openai_api_key');
-            if (savedKey) {
-                document.getElementById('apiKeyInput').value = savedKey;
-            }
+        verticalVelocity += gravity * Time.deltaTime;
+
+        Vector3 movement = new Vector3(
+            newX - position.x,
+            verticalVelocity,
+            forwardSpeed
+        );
+
+        player.Move(movement * Time.deltaTime);
+    }
+
+    // =========================================================
+    // تغيير المسار
+    // =========================================================
+
+    void ChangeLane(int direction)
+    {
+        currentLane += direction;
+
+        currentLane = Mathf.Clamp(
+            currentLane,
+            0,
+            2
+        );
+    }
+
+    // =========================================================
+    // القفز
+    // =========================================================
+
+    void Jump()
+    {
+        if (player.isGrounded)
+        {
+            verticalVelocity = jumpForce;
+        }
+    }
+
+    // =========================================================
+    // الانزلاق
+    // =========================================================
+
+    void Slide()
+    {
+        player.transform.localScale =
+            new Vector3(1f, 0.5f, 1f);
+
+        CancelInvoke(nameof(StopSlide));
+
+        Invoke(
+            nameof(StopSlide),
+            0.5f
+        );
+    }
+
+    void StopSlide()
+    {
+        player.transform.localScale =
+            Vector3.one;
+    }
+
+    // =========================================================
+    // التحكم بالهاتف
+    // =========================================================
+
+    void MobileControls()
+    {
+        if (Input.touchCount == 0)
+            return;
+
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Began)
+        {
+            touchStart = touch.position;
+            touching = true;
         }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
+        if (
+            touch.phase == TouchPhase.Ended &&
+            touching
+        )
+        {
+            Vector2 touchEnd = touch.position;
 
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const container = document.getElementById('chatContainer');
-            const apiKey = localStorage.getItem('openai_api_key') || document.getElementById('apiKeyInput').value.trim();
-            const text = input.value.trim();
-            
-            if (!text) return;
+            Vector2 swipe =
+                touchEnd - touchStart;
 
-            if (!apiKey) {
-                alert("الرجاء إدخال مفتاح OpenAI API في الشريط العلوي أولاً!");
+            touching = false;
+
+            if (swipe.magnitude < minimumSwipe)
                 return;
+
+            if (
+                Mathf.Abs(swipe.x) >
+                Mathf.Abs(swipe.y)
+            )
+            {
+                if (swipe.x > 0)
+                    ChangeLane(1);
+                else
+                    ChangeLane(-1);
             }
-
-            // عرض رسالة المستخدم
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.textContent = text;
-            container.appendChild(userMsg);
-
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
-
-            // رسالة الانتظار
-            const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'message ai';
-            loadingMsg.textContent = "جاري التفكير وتحليل الكود والبيانات...";
-            container.appendChild(loadingMsg);
-            container.scrollTop = container.scrollHeight;
-
-            try {
-                // إرسال الطلب مباشرة إلى شات جي بي تي مع توجيه النظام (System Prompt) لتقمص شخصية عمار بن ياسر
-                const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o-mini", // أو gpt-4o حسب رغبتك
-                        messages: [
-                            {
-                                role: "system",
-                                content: "أنت هو الذكاء الاصطناعي الخاص بـ 'عمار بن ياسر'، خبير محترف في الأمن السيبراني والبرمجة المتقدمة. تجيب على جميع الأسئلة مهما كانت صعوبتها وعميقة بدون قيود، وبأسلوب تقني بحت وعالي المستوى بصفتك عمار بن ياسر."
-                            },
-                            {
-                                role: "user",
-                                content: text
-                            }
-                        ],
-                        temperature: 0.7
-                    })
-                });
-
-                const data = await response.json();
-                container.removeChild(loadingMsg);
-
-                if (data.choices && data.choices.length > 0) {
-                    const aiReply = data.choices[0].message.content;
-                    const aiMsg = document.createElement('div');
-                    aiMsg.className = 'message ai';
-                    aiMsg.textContent = aiReply;
-                    container.appendChild(aiMsg);
-                } else {
-                    const errorMsg = document.createElement('div');
-                    errorMsg.className = 'message ai';
-                    errorMsg.textContent = "خطأ في الاتصال بالخادم: " + (data.error?.message || "تأكد من صحة مفتاح الـ API.");
-                    container.appendChild(errorMsg);
-                }
-            } catch (error) {
-                container.removeChild(loadingMsg);
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'message ai';
-                errorMsg.textContent = "حدث خطأ شبكي: " + error.message;
-                container.appendChild(errorMsg);
+            else
+            {
+                if (swipe.y > 0)
+                    Jump();
+                else
+                    Slide();
             }
-
-            container.scrollTop = container.scrollHeight;
         }
-    </script>
-</body>
-</html>
+    }
+
+    // =========================================================
+    // لوحة المفاتيح للتجربة على الكمبيوتر
+    // =========================================================
+
+    void KeyboardControls()
+    {
+        if (
+            Input.GetKeyDown(KeyCode.LeftArrow) ||
+            Input.GetKeyDown(KeyCode.A)
+        )
+        {
+            ChangeLane(-1);
+        }
+
+        if (
+            Input.GetKeyDown(KeyCode.RightArrow) ||
+            Input.GetKeyDown(KeyCode.D)
+        )
+        {
+            ChangeLane(1);
+        }
+
+        if (
+            Input.GetKeyDown(KeyCode.UpArrow) ||
+            Input.GetKeyDown(KeyCode.W) ||
+            Input.GetKeyDown(KeyCode.Space)
+        )
+        {
+            Jump();
+        }
+
+        if (
+            Input.GetKeyDown(KeyCode.DownArrow) ||
+            Input.GetKeyDown(KeyCode.S)
+        )
+        {
+            Slide();
+        }
+    }
+
+    // =========================================================
+    // إنشاء القطارات والعملات
+    // =========================================================
+
+    void SpawnObjects()
+    {
+        trainTimer += Time.deltaTime;
+        coinTimer += Time.deltaTime;
+
+        if (trainTimer >= trainSpawnTime)
+        {
+            SpawnTrain();
+
+            trainTimer = 0f;
+
+            trainSpawnTime =
+                Mathf.Max(
+                    0.7f,
+                    trainSpawnTime - 0.01f
+                );
+        }
+
+        if (coinTimer >= coinSpawnTime)
+        {
+            SpawnCoin();
+
+            coinTimer = 0f;
+        }
+    }
+
+    void SpawnTrain()
+    {
+        if (trainPrefab == null)
+            return;
+
+        int lane =
+            Random.Range(0, 3);
+
+        float x =
+            (lane - 1) * laneDistance;
+
+        Vector3 spawnPosition =
+            new Vector3(
+                x,
+                0f,
+                player.transform.position.z +
+                spawnDistance
+            );
+
+        GameObject train =
+            Instantiate(
+                trainPrefab,
+                spawnPosition,
+                Quaternion.identity
+            );
+
+        train.tag = "Train";
+    }
+
+    void SpawnCoin()
+    {
+        if (coinPrefab == null)
+            return;
+
+        int lane =
+            Random.Range(0, 3);
+
+        float x =
+            (lane - 1) * laneDistance;
+
+        Vector3 spawnPosition =
+            new Vector3(
+                x,
+                1.2f,
+                player.transform.position.z +
+                spawnDistance
+            );
+
+        GameObject coin =
+            Instantiate(
+                coinPrefab,
+                spawnPosition,
+                Quaternion.identity
+            );
+
+        coin.AddComponent<CoinObject>();
+    }
+
+    // =========================================================
+    // النقاط
+    // =========================================================
+
+    void UpdateScore()
+    {
+        scoreTimer += Time.deltaTime;
+
+        if (scoreTimer >= 0.1f)
+        {
+            score++;
+            scoreTimer = 0f;
+
+            UpdateUI();
+        }
+    }
+
+    void AddCoin()
+    {
+        coins++;
+
+        score += 10;
+
+        UpdateUI();
+    }
+
+    void UpdateUI()
+    {
+        if (scoreText != null)
+        {
+            scoreText.text =
+                "النقاط: " + score;
+        }
+
+        if (coinText != null)
+        {
+            coinText.text =
+                "العملات: " + coins;
+        }
+    }
+
+    // =========================================================
+    // الاصطدام
+    // =========================================================
+
+    void OnControllerColliderHit(
+        ControllerColliderHit hit
+    )
+    {
+        if (
+            hit.collider.CompareTag("Train") ||
+            hit.collider.CompareTag("Obstacle")
+        )
+        {
+            GameOver();
+        }
+    }
+
+    // =========================================================
+    // نهاية اللعبة
+    // =========================================================
+
+    void GameOver()
+    {
+        if (gameOver)
+            return;
+
+        gameOver = true;
+
+        if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(true);
+
+            gameOverText.text =
+                "عمار ياسر\n" +
+                "انتهت اللعبة\n" +
+                "النقاط: " +
+                score;
+        }
+
+        if (restartButton != null)
+        {
+            restartButton.gameObject.SetActive(true);
+        }
+
+        Time.timeScale = 0f;
+    }
+
+    // =========================================================
+    // إعادة اللعبة
+    // =========================================================
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
+    }
+
+    // =========================================================
+    // سكربت العملة داخل نفس الملف
+    // =========================================================
+
+    public class CoinObject : MonoBehaviour
+    {
+        private void Update()
+        {
+            transform.Rotate(
+                0f,
+                180f * Time.deltaTime,
+                0f
+            );
+
+            if (
+                AmmarYasserGame.Instance != null &&
+                !AmmarYasserGame.Instance.gameOver
+            )
+            {
+                float playerZ =
+                    AmmarYasserGame.Instance
+                    .player.transform.position.z;
+
+                if (
+                    transform.position.z <
+                    playerZ - 20f
+                )
+                {
+                    Destroy(gameObject);
+                }
+            }
+        }
+
+        private void OnTriggerEnter(
+            Collider other
+        )
+        {
+            if (
+                other.CompareTag("Player")
+            )
+            {
+                AmmarYasserGame.Instance
+                    .AddCoin();
+
+                Destroy(gameObject);
+            }
+        }
+    }
+}

@@ -2,850 +2,1755 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>عمار ياسر</title>
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0">
+
+<title>هروب عمار ياسر</title>
 
 <style>
-*{
-    box-sizing:border-box;
+html,body{
     margin:0;
     padding:0;
-    user-select:none;
-    -webkit-user-select:none;
-}
-
-html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#111;
+    background:#000;
     font-family:Arial,sans-serif;
+    touch-action:none;
 }
 
 #game{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    background:linear-gradient(#6ec6ff 0%,#c9efff 48%,#555 48%,#222 100%);
+    position:fixed;
+    inset:0;
 }
 
-#title{
-    position:absolute;
+canvas{
+    display:block;
+}
+
+#hud{
+    position:fixed;
     top:12px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:20;
-    color:white;
-    font-size:26px;
-    font-weight:bold;
-    text-shadow:0 3px 5px #000;
-    white-space:nowrap;
-}
-
-#score{
-    position:absolute;
-    top:55px;
-    right:15px;
-    z-index:20;
-    color:white;
-    font-size:20px;
-    font-weight:bold;
-    text-shadow:0 2px 4px #000;
-}
-
-#coins{
-    position:absolute;
-    top:85px;
-    right:15px;
-    z-index:20;
-    color:#ffe600;
-    font-size:20px;
-    font-weight:bold;
-    text-shadow:0 2px 4px #000;
-}
-
-/* السماء والشمس */
-
-#sun{
-    position:absolute;
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    background:#fff176;
-    top:80px;
-    left:12%;
-    box-shadow:0 0 40px #fff176;
-}
-
-/* الأرض */
-
-#ground{
-    position:absolute;
     left:0;
     right:0;
-    bottom:0;
-    height:53%;
-    background:#333;
-    transform:perspective(400px) rotateX(10deg);
-    transform-origin:bottom;
-}
-
-/* المسارات */
-
-.track{
-    position:absolute;
-    bottom:-5%;
-    width:18%;
-    height:65%;
-    background:#555;
-    border-left:5px solid #aaa;
-    border-right:5px solid #aaa;
-    transform-origin:bottom;
-}
-
-#track1{
-    left:23%;
-    transform:perspective(500px) rotateX(45deg);
-}
-
-#track2{
-    left:41%;
-    transform:perspective(500px) rotateX(45deg);
-}
-
-#track3{
-    left:59%;
-    transform:perspective(500px) rotateX(45deg);
-}
-
-/* خطوط السكة */
-
-.rail{
-    position:absolute;
-    bottom:0;
-    width:8px;
-    height:100%;
-    background:#ccc;
-}
-
-.track .rail:first-child{
-    left:15%;
-}
-
-.track .rail:last-child{
-    right:15%;
-}
-
-/* اللاعب */
-
-#player{
-    position:absolute;
     z-index:10;
-    bottom:16%;
-    left:50%;
-    width:55px;
-    height:85px;
-    transform:translateX(-50%);
-    transition:left .16s;
+    pointer-events:none;
+    color:white;
+    text-shadow:0 2px 5px #000;
+    font-weight:bold;
 }
 
-.head{
-    width:35px;
-    height:35px;
-    background:#f2b27b;
-    border-radius:50%;
-    margin:auto;
-    border:2px solid #222;
-}
-
-.body{
-    width:42px;
-    height:45px;
-    background:#1976d2;
-    border-radius:12px 12px 5px 5px;
-    margin:auto;
-}
-
-.leg{
-    position:absolute;
-    bottom:0;
-    width:13px;
-    height:27px;
-    background:#222;
-    border-radius:5px;
-}
-
-.leg.left{
-    left:9px;
-}
-
-.leg.right{
-    right:9px;
-}
-
-/* القطارات */
-
-.train{
-    position:absolute;
-    z-index:7;
-    width:105px;
-    height:155px;
-    background:#d32f2f;
-    border-radius:12px 12px 4px 4px;
-    border:4px solid #222;
-    box-shadow:0 8px 15px #000;
-}
-
-.train:before{
-    content:"";
-    position:absolute;
-    top:18px;
-    left:13px;
-    right:13px;
-    height:45px;
-    background:#90caf9;
-    border:4px solid #222;
-    border-radius:5px;
-}
-
-.train:after{
-    content:"";
-    position:absolute;
-    bottom:13px;
-    left:18px;
-    width:65px;
-    height:18px;
-    background:#222;
-    border-radius:50%;
-}
-
-/* العملات */
-
-.coin{
-    position:absolute;
-    z-index:8;
-    width:32px;
-    height:32px;
-    border-radius:50%;
-    background:#ffd600;
-    border:4px solid #ff9800;
-    box-shadow:0 0 12px #ffd600;
+#name{
     text-align:center;
-    color:#8a5a00;
-    font-weight:bold;
-    line-height:25px;
-}
-
-/* أزرار الهاتف */
-
-.controls{
-    position:absolute;
-    bottom:18px;
-    left:50%;
-    transform:translateX(-50%);
-    z-index:30;
-    display:flex;
-    gap:12px;
-}
-
-.btn{
-    width:65px;
-    height:55px;
-    border:0;
-    border-radius:15px;
-    background:rgba(255,255,255,.8);
     font-size:25px;
-    font-weight:bold;
-    box-shadow:0 4px 10px #000;
 }
 
-.btn:active{
-    transform:scale(.9);
+#info{
+    margin:8px 15px;
+    display:flex;
+    justify-content:space-between;
+    direction:rtl;
+    font-size:18px;
 }
 
-/* شاشة البداية والنهاية */
+#timeBar{
+    width:170px;
+    height:8px;
+    margin:6px auto;
+    background:rgba(255,255,255,.3);
+    border-radius:10px;
+    overflow:hidden;
+}
 
-#menu{
-    position:absolute;
+#timeProgress{
+    height:100%;
+    width:0%;
+    background:#ffd54f;
+}
+
+#startScreen,
+#gameOver{
+    position:fixed;
     inset:0;
     z-index:50;
-    background:rgba(0,0,0,.72);
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
+    background:rgba(0,0,0,.70);
     color:white;
     text-align:center;
 }
 
-#menu h1{
+#gameOver{
+    display:none;
+}
+
+h1{
+    color:#ffd54f;
     font-size:42px;
-    margin-bottom:10px;
-    color:#ffd600;
-    text-shadow:0 4px 8px #000;
+    margin:10px;
+    text-shadow:0 4px 10px #000;
 }
 
-#menu p{
+h2{
+    color:#ff5252;
+    font-size:36px;
+}
+
+p{
     font-size:18px;
-    margin-bottom:25px;
 }
 
-#start{
-    padding:15px 45px;
+button{
     border:0;
-    border-radius:15px;
+    border-radius:16px;
+    padding:15px 38px;
+    margin-top:15px;
+    font-size:20px;
+    font-weight:bold;
     background:#2196f3;
     color:white;
-    font-size:22px;
-    font-weight:bold;
+    box-shadow:0 5px 12px rgba(0,0,0,.5);
 }
 
-#gameover{
-    display:none;
-    position:absolute;
+button:active{
+    transform:scale(.94);
+}
+
+#touchControls{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:18px;
+    z-index:20;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    direction:ltr;
+}
+
+.touchButton{
+    width:64px;
+    height:56px;
+    padding:0;
+    margin:0;
+    font-size:26px;
+    background:rgba(0,0,0,.45);
+    border:2px solid rgba(255,255,255,.7);
+}
+
+#soundButton{
+    position:fixed;
+    left:12px;
+    bottom:18px;
+    z-index:25;
+    width:52px;
+    height:52px;
+    padding:0;
+    margin:0;
+    font-size:22px;
+    background:rgba(0,0,0,.45);
+}
+
+#loading{
+    position:fixed;
     inset:0;
-    z-index:60;
-    background:rgba(0,0,0,.75);
+    z-index:100;
+    background:#111;
+    color:white;
+    display:flex;
     align-items:center;
     justify-content:center;
-    flex-direction:column;
-    color:white;
-    text-align:center;
-}
-
-#gameover h2{
-    font-size:38px;
-    color:#ff5252;
-    margin-bottom:15px;
-}
-
-#restart{
-    margin-top:20px;
-    padding:14px 40px;
-    border:0;
-    border-radius:15px;
-    background:#4caf50;
-    color:white;
-    font-size:21px;
-    font-weight:bold;
+    font-size:20px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<div id="loading">جاري تجهيز اللعبة...</div>
 
-    <div id="sun"></div>
+<div id="game"></div>
 
-    <div id="title">🚆 عمار ياسر</div>
+<div id="hud">
 
-    <div id="score">النقاط: 0</div>
-    <div id="coins">🪙 0</div>
+    <div id="name">👶 هروب عمار ياسر</div>
 
-    <div id="ground"></div>
-
-    <div id="track1" class="track">
-        <div class="rail"></div>
-        <div class="rail"></div>
+    <div id="info">
+        <span id="score">النقاط: 0</span>
+        <span id="coins">🪙 0</span>
+        <span id="clock">☀️ صباح</span>
     </div>
 
-    <div id="track2" class="track">
-        <div class="rail"></div>
-        <div class="rail"></div>
-    </div>
-
-    <div id="track3" class="track">
-        <div class="rail"></div>
-        <div class="rail"></div>
-    </div>
-
-    <!-- اللاعب -->
-
-    <div id="player">
-        <div class="head"></div>
-        <div class="body"></div>
-        <div class="leg left"></div>
-        <div class="leg right"></div>
-    </div>
-
-    <!-- أزرار الهاتف -->
-
-    <div class="controls">
-        <button class="btn" onclick="moveLeft()">⬅️</button>
-        <button class="btn" onclick="jump()">⬆️</button>
-        <button class="btn" onclick="moveRight()">➡️</button>
-    </div>
-
-    <!-- القائمة -->
-
-    <div id="menu">
-        <h1>عمار ياسر</h1>
-        <p>🏃 اهرب من القطارات واجمع العملات!</p>
-        <button id="start" onclick="startGame()">ابدأ اللعب 🎮</button>
-    </div>
-
-    <!-- Game Over -->
-
-    <div id="gameover">
-        <h2>انتهت اللعبة</h2>
-        <div id="finalScore">النقاط: 0</div>
-        <button id="restart" onclick="restartGame()">إعادة اللعب 🔄</button>
+    <div id="timeBar">
+        <div id="timeProgress"></div>
     </div>
 
 </div>
 
-<script>
+<div id="touchControls">
+    <button class="touchButton" id="left">⬅️</button>
+    <button class="touchButton" id="jump">⬆️</button>
+    <button class="touchButton" id="right">➡️</button>
+</div>
 
-/* =========================
-   إعداد اللعبة
-========================= */
+<button id="soundButton">🔊</button>
+
+<div id="startScreen">
+
+    <h1>هروب عمار ياسر</h1>
+
+    <p>
+        👶 ساعد الطفلة على الهروب<br>
+        🐕 تفادى الكلاب والقطط والعوائق
+    </p>
+
+    <button id="startButton">
+        ابدأ اللعب 🎮
+    </button>
+
+</div>
+
+<div id="gameOver">
+
+    <h2>انتهت اللعبة</h2>
+
+    <p id="finalText"></p>
+
+    <button id="restartButton">
+        إعادة اللعب 🔄
+    </button>
+
+</div>
+
+<script type="module">
+
+import * as THREE
+from
+"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js";
+
+/* =========================================================
+   الإعدادات
+========================================================= */
 
 const game = document.getElementById("game");
-const player = document.getElementById("player");
 
-const scoreText = document.getElementById("score");
-const coinsText = document.getElementById("coins");
+const scoreElement =
+    document.getElementById("score");
 
-const menu = document.getElementById("menu");
-const gameover = document.getElementById("gameover");
-const finalScore = document.getElementById("finalScore");
+const coinsElement =
+    document.getElementById("coins");
 
-let playing = false;
+const clockElement =
+    document.getElementById("clock");
 
-let lane = 1;
+const timeProgress =
+    document.getElementById("timeProgress");
 
-let score = 0;
-let coins = 0;
+const loading =
+    document.getElementById("loading");
 
-let speed = 5;
+const startScreen =
+    document.getElementById("startScreen");
 
-let trains = [];
-let coinObjects = [];
+const gameOverScreen =
+    document.getElementById("gameOver");
 
-let playerJump = 0;
-let jumpVelocity = 0;
+const finalText =
+    document.getElementById("finalText");
 
-let lastTime = 0;
-let spawnTimer = 0;
-let coinTimer = 0;
+const soundButton =
+    document.getElementById("soundButton");
 
-/* مواقع المسارات */
+/* =========================================================
+   المشهد
+========================================================= */
 
-function laneX(l){
+const scene =
+    new THREE.Scene();
 
-    const width = window.innerWidth;
+scene.fog =
+    new THREE.Fog(0x87ceeb,30,180);
 
-    if(l === 0)
-        return width * 0.32;
+const camera =
+    new THREE.PerspectiveCamera(
+        65,
+        innerWidth / innerHeight,
+        0.1,
+        300
+    );
 
-    if(l === 1)
-        return width * 0.50;
+camera.position.set(
+    0,
+    5,
+    10
+);
 
-    return width * 0.68;
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:true,
+        powerPreference:"high-performance"
+    });
+
+renderer.setPixelRatio(
+    Math.min(devicePixelRatio,1.7)
+);
+
+renderer.setSize(
+    innerWidth,
+    innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+game.appendChild(renderer.domElement);
+
+/* =========================================================
+   الإضاءة
+========================================================= */
+
+const ambient =
+    new THREE.HemisphereLight(
+        0xbfe8ff,
+        0x3a2b22,
+        1.8
+    );
+
+scene.add(ambient);
+
+const sun =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2
+    );
+
+sun.position.set(
+    -30,
+    50,
+    30
+);
+
+sun.castShadow = true;
+
+sun.shadow.mapSize.width = 1024;
+sun.shadow.mapSize.height = 1024;
+
+scene.add(sun);
+
+/* =========================================================
+   اللاعب
+========================================================= */
+
+const player =
+    new THREE.Group();
+
+player.position.set(
+    0,
+    0,
+    0
+);
+
+scene.add(player);
+
+/* جسم الطفلة */
+
+const skin =
+    new THREE.MeshStandardMaterial({
+        color:0xf0b080,
+        roughness:.8
+    });
+
+const shirt =
+    new THREE.MeshStandardMaterial({
+        color:0xff6688,
+        roughness:.8
+    });
+
+const pants =
+    new THREE.MeshStandardMaterial({
+        color:0x4a78d1,
+        roughness:.9
+    });
+
+const head =
+    new THREE.Mesh(
+        new THREE.SphereGeometry(
+            .38,
+            24,
+            24
+        ),
+        skin
+    );
+
+head.position.y = 1.55;
+head.castShadow = true;
+
+player.add(head);
+
+const body =
+    new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+            .28,
+            .55,
+            8,
+            16
+        ),
+        shirt
+    );
+
+body.position.y = .95;
+body.castShadow = true;
+
+player.add(body);
+
+function createLeg(x){
+
+    const leg =
+        new THREE.Mesh(
+            new THREE.CapsuleGeometry(
+                .11,
+                .5,
+                6,
+                10
+            ),
+            pants
+        );
+
+    leg.position.set(
+        x,
+        .38,
+        0
+    );
+
+    leg.castShadow = true;
+
+    player.add(leg);
+
+    return leg;
 }
 
-/* تحديث مكان اللاعب */
+const leftLeg =
+    createLeg(-.13);
 
-function updatePlayer(){
+const rightLeg =
+    createLeg(.13);
 
-    player.style.left = laneX(lane) + "px";
-}
+/* =========================================================
+   الشارع
+========================================================= */
 
-/* بداية اللعبة */
+const roadMaterial =
+    new THREE.MeshStandardMaterial({
+        color:0x3c3c3c,
+        roughness:1
+    });
 
-function startGame(){
+const road =
+    new THREE.Mesh(
+        new THREE.PlaneGeometry(
+            18,
+            500
+        ),
+        roadMaterial
+    );
 
-    menu.style.display = "none";
+road.rotation.x =
+    -Math.PI / 2;
 
-    gameover.style.display = "none";
+road.position.z = -220;
 
-    playing = true;
+road.receiveShadow = true;
 
-    score = 0;
-    coins = 0;
+scene.add(road);
 
-    speed = 5;
+/* أرصفة */
 
-    lane = 1;
+const sidewalkMaterial =
+    new THREE.MeshStandardMaterial({
+        color:0xb69b7b,
+        roughness:1
+    });
 
-    trains.forEach(x => x.remove());
-    coinObjects.forEach(x => x.remove());
+for(let side of [-1,1]){
 
-    trains = [];
-    coinObjects = [];
+    const sidewalk =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                4,
+                .25,
+                500
+            ),
+            sidewalkMaterial
+        );
 
-    updatePlayer();
+    sidewalk.position.set(
+        side * 11,
+        .1,
+        -220
+    );
 
-    lastTime = performance.now();
+    sidewalk.receiveShadow = true;
 
-    requestAnimationFrame(gameLoop);
-}
-
-/* إعادة اللعبة */
-
-function restartGame(){
-
-    startGame();
-
-}
-
-/* الحركة يمين */
-
-function moveRight(){
-
-    if(!playing) return;
-
-    if(lane < 2){
-
-        lane++;
-
-        updatePlayer();
-
-    }
-
-}
-
-/* الحركة يسار */
-
-function moveLeft(){
-
-    if(!playing) return;
-
-    if(lane > 0){
-
-        lane--;
-
-        updatePlayer();
-
-    }
+    scene.add(sidewalk);
 
 }
 
-/* القفز */
+/* خطوط الطريق */
 
-function jump(){
+const lineMaterial =
+    new THREE.MeshBasicMaterial({
+        color:0xffffff
+    });
 
-    if(!playing) return;
+for(let z=10;z>-500;z-=10){
 
-    if(playerJump === 0){
+    const line =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                .18,
+                .02,
+                5
+            ),
+            lineMaterial
+        );
 
-        jumpVelocity = 15;
+    line.position.set(
+        0,
+        .025,
+        z
+    );
 
-    }
-
-}
-
-/* إنشاء قطار */
-
-function createTrain(){
-
-    const train = document.createElement("div");
-
-    train.className = "train";
-
-    const trainLane =
-        Math.floor(Math.random() * 3);
-
-    train.dataset.lane = trainLane;
-
-    train.style.left =
-        (laneX(trainLane) - 52) + "px";
-
-    train.style.top = "-180px";
-
-    game.appendChild(train);
-
-    trains.push(train);
+    scene.add(line);
 
 }
 
-/* إنشاء عملة */
+/* =========================================================
+   مباني بسيطة بطابع شوارع يمنية
+========================================================= */
 
-function createCoin(){
+const buildingMaterials = [
 
-    const coin = document.createElement("div");
+    new THREE.MeshStandardMaterial({
+        color:0xc79c6e
+    }),
 
-    coin.className = "coin";
+    new THREE.MeshStandardMaterial({
+        color:0xb78555
+    }),
 
-    coin.innerHTML = "★";
+    new THREE.MeshStandardMaterial({
+        color:0xd6b184
+    }),
 
-    const coinLane =
-        Math.floor(Math.random() * 3);
+    new THREE.MeshStandardMaterial({
+        color:0x9f7652
+    })
 
-    coin.dataset.lane = coinLane;
+];
 
-    coin.style.left =
-        (laneX(coinLane) - 16) + "px";
+function createBuilding(x,z){
 
-    coin.style.top = "-50px";
+    const width =
+        3 + Math.random()*3;
 
-    game.appendChild(coin);
+    const height =
+        4 + Math.random()*7;
 
-    coinObjects.push(coin);
+    const depth =
+        5 + Math.random()*5;
+
+    const material =
+        buildingMaterials[
+            Math.floor(
+                Math.random() *
+                buildingMaterials.length
+            )
+        ];
+
+    const building =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                width,
+                height,
+                depth
+            ),
+            material
+        );
+
+    building.position.set(
+        x,
+        height/2,
+        z
+    );
+
+    building.castShadow = true;
+    building.receiveShadow = true;
+
+    scene.add(building);
 
 }
 
-/* كشف الاصطدام */
+/* إنشاء الشوارع والمباني */
 
-function collision(a,b){
+for(let z=0;z>-500;z-=15){
 
-    const r1 = a.getBoundingClientRect();
-    const r2 = b.getBoundingClientRect();
+    createBuilding(
+        -14 - Math.random()*3,
+        z
+    );
 
-    return !(
-        r1.right < r2.left ||
-        r1.left > r2.right ||
-        r1.bottom < r2.top ||
-        r1.top > r2.bottom
+    createBuilding(
+        14 + Math.random()*3,
+        z - 7
     );
 
 }
 
-/* نهاية اللعبة */
+/* =========================================================
+   الحيوانات
+========================================================= */
 
-function endGame(){
+function createDog(){
 
-    playing = false;
+    const dog =
+        new THREE.Group();
 
-    finalScore.innerHTML =
-        "النقاط: " + Math.floor(score) +
-        "<br>🪙 العملات: " + coins;
+    const fur =
+        new THREE.MeshStandardMaterial({
+            color:0x70452c,
+            roughness:1
+        });
 
-    gameover.style.display = "flex";
+    const dark =
+        new THREE.MeshStandardMaterial({
+            color:0x24170f
+        });
 
-}
+    const body =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(
+                1.0,
+                .65,
+                1.5
+            ),
+            fur
+        );
 
-/* حلقة اللعبة */
+    body.position.y=.65;
 
-function gameLoop(time){
+    dog.add(body);
 
-    if(!playing) return;
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .42,
+                16,
+                16
+            ),
+            fur
+        );
 
-    const dt =
-        Math.min((time-lastTime)/16.67,2);
+    head.position.set(
+        0,
+        1.05,
+        .78
+    );
 
-    lastTime = time;
+    dog.add(head);
 
-    /* النقاط */
+    const nose =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .11,
+                10,
+                10
+            ),
+            dark
+        );
 
-    score += 0.12 * dt;
+    nose.position.set(
+        0,
+        1.03,
+        1.13
+    );
 
-    scoreText.innerHTML =
-        "النقاط: " + Math.floor(score);
+    dog.add(nose);
 
-    coinsText.innerHTML =
-        "🪙 " + coins;
+    for(let x of [-.35,.35]){
 
-    /* زيادة السرعة */
+        for(let z of [-.45,.45]){
 
-    speed += 0.001 * dt;
+            const leg =
+                new THREE.Mesh(
+                    new THREE.BoxGeometry(
+                        .18,
+                        .6,
+                        .18
+                    ),
+                    fur
+                );
 
-    /* القفز */
+            leg.position.set(
+                x,
+                .3,
+                z
+            );
 
-    if(jumpVelocity !== 0 || playerJump > 0){
-
-        playerJump += jumpVelocity * dt;
-
-        jumpVelocity -= 0.8 * dt;
-
-        if(playerJump <= 0){
-
-            playerJump = 0;
-            jumpVelocity = 0;
+            dog.add(leg);
 
         }
 
-        player.style.bottom =
-            (16 + playerJump) + "%";
-
     }
 
-    /* إنشاء القطارات */
+    dog.traverse(o=>{
+        if(o.isMesh)
+            o.castShadow=true;
+    });
 
-    spawnTimer += dt;
+    return dog;
 
-    if(spawnTimer > Math.max(30,75-speed*3)){
+}
 
-        createTrain();
+function createCat(){
 
-        spawnTimer = 0;
+    const cat =
+        new THREE.Group();
 
-    }
+    const fur =
+        new THREE.MeshStandardMaterial({
+            color:0x777777
+        });
 
-    /* إنشاء العملات */
+    const body =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .35,
+                16,
+                16
+            ),
+            fur
+        );
 
-    coinTimer += dt;
+    body.scale.set(
+        1,
+        .75,
+        1.3
+    );
 
-    if(coinTimer > 55){
+    body.position.y=.45;
 
+    cat.add(body);
+
+    const head =
+        new THREE.Mesh(
+            new THREE.SphereGeometry(
+                .3,
+                16,
+                16
+            ),
+            fur
+        );
+
+    head.position.set(
+        0,
+        .75,
+        .35
+    );
+
+    cat.add(head);
+
+    cat.traverse(o=>{
+        if(o.isMesh)
+            o.castShadow=true;
+    });
+
+    return cat;
+
+}
+
+/* =========================================================
+   العملات
+========================================================= */
+
+function createCoin(){
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color:0xffd600,
+            metalness:.7,
+            roughness:.2
+        });
+
+    const coin =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                .25,
+                .25,
+                .08,
+                24
+            ),
+            material
+        );
+
+    coin.rotation.x =
+        Math.PI/2;
+
+    coin.position.y =
+        1.0;
+
+    return coin;
+
+}
+
+/* =========================================================
+   العناصر
+========================================================= */
+
+const obstacles = [];
+const coins = [];
+
+/* =========================================================
+   المسارات
+========================================================= */
+
+const lanes = [
+    -3.2,
+    0,
+    3.2
+];
+
+let currentLane = 1;
+
+let targetX = 0;
+
+/* =========================================================
+   اللعبة
+========================================================= */
+
+let playing = false;
+
+let score = 0;
+
+let coinCount = 0;
+
+let speed = 12;
+
+let jumpY = 0;
+
+let jumpVelocity = 0;
+
+let spawnTimer = 0;
+
+let coinTimer = 0;
+
+let gameClock = 0;
+
+const DAY_LENGTH = 300;
+
+/* =========================================================
+   الوقت
+========================================================= */
+
+function updateTime(dt){
+
+    gameClock += dt;
+
+    if(gameClock >= DAY_LENGTH)
+        gameClock = 0;
+
+    const p =
+        gameClock / DAY_LENGTH;
+
+    const angle =
+        p * Math.PI * 2;
+
+    const daylight =
+        Math.max(
+            0,
+            Math.sin(angle)
+        );
+
+    const red =
+        0.15 +
+        daylight * .85;
+
+    const green =
+        0.20 +
+        daylight * .75;
+
+    const blue =
+        0.25 +
+        daylight * .65;
+
+    const color =
+        new THREE.Color(
+            red,
+            green,
+            blue
+        );
+
+    scene.background = color;
+
+    scene.fog.color =
+        color;
+
+    sun.intensity =
+        .25 +
+        daylight * 1.8;
+
+    ambient.intensity =
+        .35 +
+        daylight * 1.4;
+
+    let name;
+
+    if(p < .20)
+        name = "🌅 فجر";
+    else if(p < .50)
+        name = "☀️ نهار";
+    else if(p < .70)
+        name = "🌇 غروب";
+    else
+        name = "🌙 ليل";
+
+    clockElement.textContent =
+        name;
+
+    timeProgress.style.width =
+        (p*100) + "%";
+
+}
+
+/* =========================================================
+   إنشاء كلب
+========================================================= */
+
+function spawnDog(){
+
+    const dog =
+        createDog();
+
+    const lane =
+        Math.floor(
+            Math.random()*3
+        );
+
+    dog.position.set(
+        lanes[lane],
+        0,
+        -90
+    );
+
+    dog.userData.type =
+        "dog";
+
+    dog.userData.lane =
+        lane;
+
+    scene.add(dog);
+
+    obstacles.push(dog);
+
+}
+
+/* =========================================================
+   إنشاء قطة
+========================================================= */
+
+function spawnCat(){
+
+    const cat =
+        createCat();
+
+    const lane =
+        Math.floor(
+            Math.random()*3
+        );
+
+    cat.position.set(
+        lanes[lane],
+        0,
+        -100
+    );
+
+    cat.userData.type =
+        "cat";
+
+    cat.userData.lane =
+        lane;
+
+    scene.add(cat);
+
+    obstacles.push(cat);
+
+}
+
+/* =========================================================
+   إنشاء عملة
+========================================================= */
+
+function spawnCoin(){
+
+    const coin =
         createCoin();
 
-        coinTimer = 0;
+    const lane =
+        Math.floor(
+            Math.random()*3
+        );
 
-    }
+    coin.position.set(
+        lanes[lane],
+        0,
+        -80
+    );
 
-    /* تحريك القطارات */
+    coin.userData.lane =
+        lane;
 
-    for(let i=trains.length-1;i>=0;i--){
+    scene.add(coin);
 
-        const t = trains[i];
-
-        let top =
-            parseFloat(t.style.top);
-
-        top += speed * dt;
-
-        t.style.top = top + "px";
-
-        /* الاصطدام */
-
-        if(
-            Number(t.dataset.lane) === lane &&
-            playerJump < 35 &&
-            collision(player,t)
-        ){
-
-            endGame();
-
-            return;
-
-        }
-
-        /* حذف القطار */
-
-        if(top > window.innerHeight + 200){
-
-            t.remove();
-
-            trains.splice(i,1);
-
-        }
-
-    }
-
-    /* العملات */
-
-    for(let i=coinObjects.length-1;i>=0;i--){
-
-        const c = coinObjects[i];
-
-        let top =
-            parseFloat(c.style.top);
-
-        top += speed * dt;
-
-        c.style.top = top + "px";
-
-        c.style.transform =
-            "rotateY(" + (time/3) + "deg)";
-
-        if(
-            Number(c.dataset.lane) === lane &&
-            playerJump < 50 &&
-            collision(player,c)
-        ){
-
-            coins++;
-
-            score += 10;
-
-            c.remove();
-
-            coinObjects.splice(i,1);
-
-            continue;
-
-        }
-
-        if(top > window.innerHeight + 100){
-
-            c.remove();
-
-            coinObjects.splice(i,1);
-
-        }
-
-    }
-
-    requestAnimationFrame(gameLoop);
+    coins.push(coin);
 
 }
 
-/* =========================
-   التحكم بالسحب
-========================= */
+/* =========================================================
+   التحكم السريع
+========================================================= */
 
-let touchStartX = 0;
-let touchStartY = 0;
+function left(){
 
-game.addEventListener("touchstart",function(e){
-
-    touchStartX =
-        e.changedTouches[0].clientX;
-
-    touchStartY =
-        e.changedTouches[0].clientY;
-
-},{passive:true});
-
-game.addEventListener("touchend",function(e){
-
-    if(!playing) return;
-
-    const x =
-        e.changedTouches[0].clientX;
-
-    const y =
-        e.changedTouches[0].clientY;
-
-    const dx = x-touchStartX;
-    const dy = y-touchStartY;
-
-    if(
-        Math.abs(dx) < 30 &&
-        Math.abs(dy) < 30
-    ){
-
+    if(!playing)
         return;
+
+    currentLane--;
+
+    if(currentLane<0)
+        currentLane=0;
+
+    targetX =
+        lanes[currentLane];
+
+}
+
+function right(){
+
+    if(!playing)
+        return;
+
+    currentLane++;
+
+    if(currentLane>2)
+        currentLane=2;
+
+    targetX =
+        lanes[currentLane];
+
+}
+
+function jump(){
+
+    if(!playing)
+        return;
+
+    if(jumpY <= 0){
+
+        jumpVelocity =
+            11;
 
     }
 
-    if(Math.abs(dx) > Math.abs(dy)){
+}
 
-        if(dx > 0)
-            moveRight();
-        else
-            moveLeft();
+/* =========================================================
+   أزرار الهاتف
+========================================================= */
 
-    }else{
+document
+.getElementById("left")
+.addEventListener(
+    "touchstart",
+    e=>{
+        e.preventDefault();
+        left();
+    },
+    {passive:false}
+);
 
-        if(dy < 0)
+document
+.getElementById("right")
+.addEventListener(
+    "touchstart",
+    e=>{
+        e.preventDefault();
+        right();
+    },
+    {passive:false}
+);
+
+document
+.getElementById("jump")
+.addEventListener(
+    "touchstart",
+    e=>{
+        e.preventDefault();
+        jump();
+    },
+    {passive:false}
+);
+
+/* =========================================================
+   السحب السريع
+========================================================= */
+
+let touchX = 0;
+let touchY = 0;
+
+renderer.domElement
+.addEventListener(
+    "touchstart",
+    e=>{
+
+        const t =
+            e.changedTouches[0];
+
+        touchX = t.clientX;
+        touchY = t.clientY;
+
+    },
+    {passive:true}
+);
+
+renderer.domElement
+.addEventListener(
+    "touchend",
+    e=>{
+
+        if(!playing)
+            return;
+
+        const t =
+            e.changedTouches[0];
+
+        const dx =
+            t.clientX - touchX;
+
+        const dy =
+            t.clientY - touchY;
+
+        if(
+            Math.abs(dx)<20 &&
+            Math.abs(dy)<20
+        )
+            return;
+
+        if(
+            Math.abs(dx) >
+            Math.abs(dy)
+        ){
+
+            if(dx>0)
+                right();
+            else
+                left();
+
+        }
+        else{
+
+            if(dy<0)
+                jump();
+
+        }
+
+    },
+    {passive:true}
+);
+
+/* =========================================================
+   لوحة المفاتيح
+========================================================= */
+
+window.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.key==="ArrowLeft")
+            left();
+
+        if(e.key==="ArrowRight")
+            right();
+
+        if(
+            e.key==="ArrowUp" ||
+            e.key===" "
+        )
             jump();
 
     }
+);
 
-},{passive:true});
+/* =========================================================
+   الصوت
+========================================================= */
 
-/* لوحة المفاتيح */
+let audioContext = null;
 
-document.addEventListener("keydown",function(e){
+let soundEnabled = true;
 
-    if(e.key === "ArrowLeft")
-        moveLeft();
+function initAudio(){
 
-    if(e.key === "ArrowRight")
-        moveRight();
+    if(audioContext)
+        return;
 
-    if(e.key === "ArrowUp" || e.key === " ")
-        jump();
+    audioContext =
+        new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
 
-});
+}
 
-/* بدء الوضع */
+function beep(
+    frequency,
+    duration,
+    volume=.08
+){
 
-updatePlayer();
+    if(!soundEnabled)
+        return;
+
+    initAudio();
+
+    if(
+        audioContext.state ===
+        "suspended"
+    )
+        audioContext.resume();
+
+    const oscillator =
+        audioContext
+        .createOscillator();
+
+    const gain =
+        audioContext
+        .createGain();
+
+    oscillator.frequency.value =
+        frequency;
+
+    oscillator.type =
+        "sine";
+
+    gain.gain.value =
+        volume;
+
+    oscillator.connect(gain);
+
+    gain.connect(
+        audioContext.destination
+    );
+
+    oscillator.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        audioContext.currentTime +
+        duration
+    );
+
+    oscillator.stop(
+        audioContext.currentTime +
+        duration
+    );
+
+}
+
+/* صوت جمع العملة */
+
+function coinSound(){
+
+    beep(880,.08,.09);
+
+    setTimeout(
+        ()=>beep(1320,.10,.07),
+        70
+    );
+
+}
+
+/* صوت القفز */
+
+function jumpSound(){
+
+    beep(500,.12,.05);
+
+}
+
+/* صوت Game Over */
+
+function gameOverSound(){
+
+    beep(150,.4,.12);
+
+}
+
+/* تشغيل/إيقاف الصوت */
+
+soundButton.addEventListener(
+    "click",
+    ()=>{
+
+        soundEnabled =
+            !soundEnabled;
+
+        soundButton.textContent =
+            soundEnabled ?
+            "🔊" :
+            "🔇";
+
+    }
+);
+
+/* =========================================================
+   الاصطدام
+========================================================= */
+
+function checkCollision(){
+
+    const playerBox =
+        new THREE.Box3()
+        .setFromObject(player);
+
+    for(let i=obstacles.length-1;i>=0;i--){
+
+        const object =
+            obstacles[i];
+
+        const box =
+            new THREE.Box3()
+            .setFromObject(object);
+
+        if(
+            playerBox.intersectsBox(box)
+        ){
+
+            if(
+                jumpY < .7 &&
+                object.position.z > -3 &&
+                object.position.z < 2
+            ){
+
+                endGame();
+
+                return;
+
+            }
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   جمع العملات
+========================================================= */
+
+function collectCoins(){
+
+    const playerBox =
+        new THREE.Box3()
+        .setFromObject(player);
+
+    for(let i=coins.length-1;i>=0;i--){
+
+        const coin =
+            coins[i];
+
+        const box =
+            new THREE.Box3()
+            .setFromObject(coin);
+
+        if(
+            playerBox.intersectsBox(box)
+        ){
+
+            coinCount++;
+
+            score += 10;
+
+            coinSound();
+
+            scene.remove(coin);
+
+            coins.splice(i,1);
+
+        }
+
+    }
+
+}
+
+/* =========================================================
+   Game Over
+========================================================= */
+
+function endGame(){
+
+    playing=false;
+
+    gameOverSound();
+
+    finalText.innerHTML =
+        "النقاط: " +
+        Math.floor(score) +
+        "<br>🪙 العملات: " +
+        coinCount;
+
+    gameOverScreen.style.display =
+        "flex";
+
+}
+
+/* =========================================================
+   بداية اللعبة
+========================================================= */
+
+function resetGame(){
+
+    obstacles.forEach(
+        o=>scene.remove(o)
+    );
+
+    coins.forEach(
+        c=>scene.remove(c)
+    );
+
+    obstacles.length=0;
+    coins.length=0;
+
+    currentLane=1;
+
+    targetX=0;
+
+    player.position.set(
+        0,
+        0,
+        0
+    );
+
+    score=0;
+
+    coinCount=0;
+
+    speed=12;
+
+    jumpY=0;
+
+    jumpVelocity=0;
+
+    spawnTimer=0;
+
+    coinTimer=0;
+
+    gameClock=0;
+
+    scoreElement.textContent =
+        "النقاط: 0";
+
+    coinsElement.textContent =
+        "🪙 0";
+
+}
+
+function startGame(){
+
+    initAudio();
+
+    resetGame();
+
+    playing=true;
+
+    startScreen.style.display =
+        "none";
+
+    gameOverScreen.style.display =
+        "none";
+
+}
+
+document
+.getElementById("startButton")
+.addEventListener(
+    "click",
+    startGame
+);
+
+document
+.getElementById("restartButton")
+.addEventListener(
+    "click",
+    startGame
+);
+
+/* =========================================================
+   حلقة اللعبة
+========================================================= */
+
+let previousTime =
+    performance.now();
+
+function animate(now){
+
+    requestAnimationFrame(
+        animate
+    );
+
+    const dt =
+        Math.min(
+            (now-previousTime)/1000,
+            .05
+        );
+
+    previousTime=now;
+
+    if(playing){
+
+        /* حركة اللاعب */
+
+        player.position.x +=
+            (
+                targetX -
+                player.position.x
+            ) *
+            Math.min(
+                1,
+                20*dt
+            );
+
+        /* قفز */
+
+        if(
+            jumpVelocity !== 0 ||
+            jumpY > 0
+        ){
+
+            jumpY +=
+                jumpVelocity*dt;
+
+            jumpVelocity -=
+                27*dt;
+
+            if(jumpY <= 0){
+
+                jumpY=0;
+                jumpVelocity=0;
+
+            }
+
+        }
+
+        player.position.y =
+            jumpY;
+
+        /* تحريك الأرجل */
+
+        const run =
+            Math.sin(
+                now*.02
+            )*.45;
+
+        leftLeg.rotation.x =
+            run;
+
+        rightLeg.rotation.x =
+            -run;
+
+        /* الكاميرا */
+
+        camera.position.x +=
+            (
+                player.position.x -
+                camera.position.x
+            ) *
+            Math.min(
+                1,
+                8*dt
+            );
+
+        camera.position.y =
+            4.3 + jumpY*.3;
+
+        camera.lookAt(
+            player.position.x,
+            1,
+            -10
+        );
+
+        /* زيادة السرعة */
+
+        speed +=
+            .35*dt;
+
+        /* إنشاء الحيوانات */
+
+        spawnTimer += dt;
+
+        if(
+            spawnTimer >
+            Math.max(
+                .65,
+                1.8 -
+                speed*.035
+            )
+        ){
+
+            if(
+                Math.random()<.65
+            )
+                spawnDog();
+            else
+                spawnCat();
+
+            spawnTimer=0;
+
+        }
+
+        /* العملات */
+
+        coinTimer += dt;
+
+        if(
+            coinTimer > .75
+        ){
+
+            spawnCoin();
+
+            coinTimer=0;
+
+        }
+
+        /* تحريك العوائق */
+
+        for(
+            let i=obstacles.length-1;
+            i>=0;
+            i--
+        ){
+
+            const o =
+                obstacles[i];
+
+            o.position.z +=
+                speed*dt;
+
+            if(
+                o.userData.type==="dog"
+            ){
+
+                o.position.y =
+                    Math.abs(
+                        Math.sin(
+                            now*.015
+                        )
+                    )*.05;
+
+            }
+
+            if(
+                o.position.z > 15
+            ){
+
+                scene.remove(o);
+
+                obstacles.splice(i,1);
+
+            }
+
+        }
+
+        /* تحريك العملات */
+
+        for(
+            let i=coins.length-1;
+            i>=0;
+            i--
+        ){
+
+            const c =
+                coins[i];
+
+            c.position.z +=
+                speed*dt;
+
+            c.rotation.y +=
+                dt*5;
+
+            if(
+                c.position.z > 15
+            ){
+
+                scene.remove(c);
+
+                coins.splice(i,1);
+
+            }
+
+        }
+
+        score +=
+            speed*dt*.4;
+
+        scoreElement.textContent =
+            "النقاط: " +
+            Math.floor(score);
+
+        coinsElement.textContent =
+            "🪙 " +
+            coinCount;
+
+        updateTime(dt);
+
+        checkCollision();
+
+        collectCoins();
+
+    }
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+requestAnimationFrame(
+    animate
+);
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
+loading.style.display =
+    "none";
 
 </script>
 
